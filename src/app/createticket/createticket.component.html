@@ -1,0 +1,15 @@
+<!-- Kategorieauswahl -->
+<mat-form-field>
+    <mat-label>Störgrund</mat-label>
+    <mat-select [(ngModel)]="ticket.category" #categorieformcontrol="ngModel" required>
+        <ng-container *ngFor="let category of categories">
+            <mat-option *ngIf="category.text != 'divider'" [value]="category.text">{{category.text}}</mat-option>
+            <mat-option *ngIf="category.text == 'divider'" disabled>
+                <mat-divider></mat-divider>
+            </mat-option>
+        </ng-container>
+    </mat-select>
+    <mat-error *ngIf="categorieformcontrol.invalid && (categorieformcontrol.dirty || categorieformcontrol.touched)">
+        Bitte wählen Sie einen Störgrund.</mat-error>
+    <!-- <mat-hint><strong>Sonstiges wählen, wenn keiner der Störgründe zutrifft.</strong> </mat-hint> -->
+</mat-form-field>
