@@ -1,15 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OverviewComponent } from './overview/overview.component';
 
+import { MonitorRoutingModule } from './monitor-routing.module';
+import { MonitorComponent } from './monitor/monitor.component';
 
 
 @NgModule({
   declarations: [
-    OverviewComponent
+    MonitorComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MonitorRoutingModule
   ]
 })
 export class MonitorModule { }

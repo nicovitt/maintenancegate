@@ -1,14 +1,72 @@
-<mat-drawer-container class="example-container" autosize>
-    <mat-drawer #drawer class="example-sidenav" mode="side">
-        <p>Auto-resizing sidenav</p>
-    </mat-drawer>
+<mat-drawer-container hasBackdrop="true" class="content-container" autosize>
+  <mat-drawer #drawer mode="over" class="sidenav">
+    <mat-toolbar>
+      <mat-toolbar-row
+        class="sidenav-entry menu-toolbar-with-icon"
+        routerLink="/"
+        (click)="drawer.toggle()"
+      >
+        <mat-icon aria-hidden="false" aria-label="Ticketüberischt icon"
+          >confirmation_number</mat-icon
+        >
+        <span>Tickets</span>
+      </mat-toolbar-row>
 
-    <div class="example-sidenav-content">
-        <button type="button" mat-button (click)="drawer.toggle()">
-            Toggle sidenav
-        </button>
-    </div>
+      <mat-toolbar-row
+        class="sidenav-entry menu-toolbar-with-icon"
+        routerLink="/monitor"
+        (click)="drawer.toggle()"
+      >
+        <mat-icon aria-hidden="false" aria-label="Monitor icon">dvr</mat-icon>
+        <span>Monitor</span>
+      </mat-toolbar-row>
 
+      <mat-toolbar-row
+        class="menu-toolbar-with-icon sidenav-entry"
+        routerLink="/reports"
+        (click)="drawer.toggle()"
+      >
+        <mat-icon aria-hidden="false" aria-label="Berichte icon"
+          >summarize</mat-icon
+        >
+        <span>Reports</span>
+      </mat-toolbar-row>
+
+      <mat-toolbar-row
+        class="sidenav-entry menu-toolbar-with-icon"
+        routerLink="/logout"
+        (click)="drawer.toggle()"
+      >
+        <mat-icon aria-hidden="false" aria-label="Logout icon">logout</mat-icon>
+        <span>Abmelden</span>
+      </mat-toolbar-row>
+    </mat-toolbar>
+
+    <mat-toolbar color="primary">
+      <mat-toolbar-row
+        class="sidenav-entry menu-toolbar-with-icon"
+        routerLink="/newticket"
+        (click)="drawer.toggle()"
+      >
+        <mat-icon aria-hidden="false" aria-label="Add new ticket icon"
+          >add</mat-icon
+        >
+        <span>Neues Ticket</span>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  </mat-drawer>
+
+  <div id="content">
+    <button
+      class="menuopener"
+      mat-icon-button
+      (click)="toggleMenuOnButton()"
+      [ngClass]="{ 'menu-open': drawer.opened }"
+    >
+      <mat-icon aria-hidden="false" aria-label="Expand menu icon"
+        >menu</mat-icon
+      >
+    </button>
+    <router-outlet></router-outlet>
+  </div>
 </mat-drawer-container>
-
-<router-outlet></router-outlet>

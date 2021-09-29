@@ -6,15 +6,11 @@
 	],
 	"settings": {
 		"terminal.integrated.profiles.windows": {
-			"PowerShell": {
-				"source": "PowerShell",
-				"icon": "terminal-powershell",
-				"args": [
-					"-ExecutionPolicy",
-					"Bypass"
-				]
+			"C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe (migrated)": {
+				"path": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+				"args": []
 			}
 		},
-		"terminal.integrated.defaultProfile.windows": "PowerShell",
+		"terminal.integrated.defaultProfile.windows": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe (migrated)",
 	},
 }

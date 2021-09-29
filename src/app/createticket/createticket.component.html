@@ -1,15 +1,242 @@
-<!-- Kategorieauswahl -->
-<mat-form-field>
-    <mat-label>Störgrund</mat-label>
-    <mat-select [(ngModel)]="ticket.category" #categorieformcontrol="ngModel" required>
-        <ng-container *ngFor="let category of categories">
-            <mat-option *ngIf="category.text != 'divider'" [value]="category.text">{{category.text}}</mat-option>
+<h1>Neues Ticket hinzufügen</h1>
+
+<mat-stepper orientation="vertical" [linear]="false" #stepper>
+  <mat-step [stepControl]="formGroup">
+    <form [formGroup]="formGroup">
+      <ng-template matStepLabel>Störgrund auswählen</ng-template>
+      <!-- Kategorieauswahl -->
+      <mat-form-field appearance="fill">
+        <mat-label>Störgrund</mat-label>
+        <mat-select formControlName="category" required>
+          <ng-container *ngFor="let category of categories">
+            <mat-option
+              *ngIf="category.text != 'divider'"
+              [value]="category.text"
+              >{{ category.text }}</mat-option
+            >
             <mat-option *ngIf="category.text == 'divider'" disabled>
-                <mat-divider></mat-divider>
+              <mat-divider></mat-divider>
             </mat-option>
-        </ng-container>
-    </mat-select>
-    <mat-error *ngIf="categorieformcontrol.invalid && (categorieformcontrol.dirty || categorieformcontrol.touched)">
-        Bitte wählen Sie einen Störgrund.</mat-error>
-    <!-- <mat-hint><strong>Sonstiges wählen, wenn keiner der Störgründe zutrifft.</strong> </mat-hint> -->
-</mat-form-field>
+          </ng-container>
+        </mat-select>
+        <mat-error
+          *ngIf="
+            formGroup.get(['category'])!.hasError('required') &&
+            (formGroup.get(['category'])!.dirty ||
+              formGroup.get(['category'])!.touched)
+          "
+        >
+          Bitte wählen Sie einen Störgrund.</mat-error
+        >
+        <mat-hint
+          >Sonstiges wählen, wenn keiner der Störgründe zutrifft.</mat-hint
+        >
+      </mat-form-field>
+
+      <!-- Eine neue Kategorie eingeben, wenn "Anderer" ausgewählt wurde -->
+      <mat-form-field *ngIf="formGroup.get(['category'])!.value == 'Anderer'">
+        <input
+          matInput
+          formControlName="category2"
+          placeholder="Neuen Störgrund eingeben ..."
+          aria-labelledby="labelWorkplaceName"
+          autocomplete="off"
+        />
+        <mat-hint>(optional)</mat-hint>
+      </mat-form-field>
+
+      <!-- Eingabefeld für den Titel des Tickets-->
+      <mat-form-field>
+        <mat-label>Titel</mat-label>
+        <input
+          matInput
+          formControlName="title"
+          aria-labelledby="labelTitle"
+          autocomplete="off"
+          required
+        />
+        <mat-error
+          *ngIf="
+            formGroup.get(['title'])!.hasError('required') &&
+            (formGroup.get(['title'])!.dirty ||
+              formGroup.get(['title'])!.touched)
+          "
+          >Bitte geben Sie einen Titel an.</mat-error
+        >
+        <mat-hint>Kurzbeschreibung in wenigen Worten. </mat-hint>
+      </mat-form-field>
+
+      <!-- Eingabebereich für die Beschreibung des Tickets-->
+      <mat-form-field>
+        <mat-label id="labelMessage">Nachricht</mat-label>
+        <textarea
+          matInput
+          formControlName="message"
+          placeholder="{{ formGroup.get(['message'])!.value }}"
+          rows="4"
+          aria-labelledby="labelMessage"
+        ></textarea>
+        <mat-hint>(optional) Beschreibung des Fehlers. </mat-hint>
+      </mat-form-field>
+      <div class="stepperbuttons">
+        <button mat-stroked-button matStepperNext>Weiter</button>
+      </div>
+    </form>
+  </mat-step>
+
+  <mat-step [stepControl]="formGroup">
+    <form [formGroup]="formGroup">
+      <ng-template matStepLabel>Arbeitsplatz auswählen</ng-template>
+      <!-- Eingabefeld für den Arbeitsplatz, aktuell wird der Werker als Nummer gespeichert -->
+      <mat-form-field>
+        <mat-label>Arbeitsplatz</mat-label>
+        <mat-select formControlName="workplace" required>
+          <!-- <mat-option
+              *ngFor="let workplaceName of _wpNameList"
+              [value]="workplaceName.text"
+              >{{ workplaceName.text }}
+            </mat-option> -->
+          <span class="mat-option" fxLayout="row" fxLayoutAlign="start center">
+            <mat-icon>add_circle_outline</mat-icon>
+            <mat-option value="Sonstiger"> Sonstiger </mat-option>
+          </span>
+        </mat-select>
+        <mat-error
+          *ngIf="
+            formGroup.get(['workplace'])!.hasError('required') &&
+            (formGroup.get(['workplace'])!.dirty ||
+              formGroup.get(['workplace'])!.touched)
+          "
+        >
+          Bitte wählen Sie einen Arbeitsplatz.</mat-error
+        >
+        <mat-hint>Arbeitsplatz auswählen.</mat-hint>
+      </mat-form-field>
+
+      <!-- Eingabefeld für einen NEUEN Arbeitsplatz -->
+      <div *ngIf="formGroup.get(['workplace'])!.value == 'Sonstiger'">
+        <mat-form-field>
+          <mat-label id="labelWorkplaceName">Arbeitsplatz</mat-label>
+          <input
+            matInput
+            formControlName="workplace2"
+            placeholder="Arbeitsplatz"
+            aria-labelledby="labelWorkplaceName"
+          />
+          <mat-hint>(optional)</mat-hint>
+        </mat-form-field>
+      </div>
+      <div class="stepperbuttons">
+        <button mat-stroked-button matStepperPrevious>Zurück</button>
+        <button mat-stroked-button matStepperNext>Weiter</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="formGroup">
+    <form [formGroup]="formGroup">
+      <ng-template matStepLabel>Bilder und Audio</ng-template>
+
+      <button mat-button (click)="allowPicture()">Bild hinzufügen</button>
+      <!-- TODO START: Camera -->
+      <!-- <video
+          *ngIf="videoCapable"
+          #video1
+          width="300"
+          autoplay
+          class="has-picture"
+        ></video> -->
+      <div *ngIf="!videoCapable">
+        Sie haben die Nutzung der Kamera nicht erlaubt.
+      </div>
+      <!-- <div class="row mb-2" *ngIf="videoCapable">
+        <button class="btn btn-primary btn-lg" (click)="onSnap()">
+          <i class="fa fa-camera"></i> Snap
+        </button>
+      </div> -->
+      <div class="row">
+        <canvas
+          #canvas1
+          width="100%"
+          [ngClass]="{ 'has-picture': pictureTaken }"
+        ></canvas>
+      </div>
+      <!-- <div class="row mb-5" *ngIf="pictureTaken">
+        <a
+          class="btn btn-primary btn-lg"
+          href="{{ downloadLink }}"
+          download="image.png"
+          ><i class="fa fa-download"></i> Download</a
+        >
+      </div> -->
+      <!-- TODO END -->
+
+      <div class="stepperbuttons">
+        <button mat-stroked-button matStepperPrevious>Zurück</button>
+        <button mat-stroked-button matStepperNext>Weiter</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="formGroup">
+    <form [formGroup]="formGroup">
+      <ng-template matStepLabel>Prioritäten</ng-template>
+      <!-- Stillstand -->
+      <h3 id="sliderDowntimeLabel">Vermutete Dauer bis zur Störungsbehebung</h3>
+      <div fxLayout="row" fxLayoutAlign="space-between center">
+        <label class="sliderlabelstart">Minuten</label>
+        <mat-slider
+          thumbLabel
+          tickInterval="1"
+          formControlName="worker_downtime"
+          aria-labelledby="sliderDowntimeLabel"
+          min="0"
+          max="100"
+          step="25"
+        ></mat-slider>
+        <label class="sliderlabelend">Wochen</label>
+      </div>
+
+      <!-- Häufigkeit -->
+      <mat-divider></mat-divider>
+      <h3 id="sliderFrequencyLabel">Häufigkeit des Problems</h3>
+      <div fxLayout="row" fxLayoutAlign="space-between center">
+        <label class="sliderlabelstart">Nie</label>
+        <mat-slider
+          thumbLabel
+          tickInterval="1"
+          formControlName="worker_frequency"
+          aria-labelledby="sliderFrequencyLabel"
+          min="0"
+          max="100"
+          step="25"
+        ></mat-slider>
+        <label class="sliderlabelend">Immer</label>
+      </div>
+
+      <!-- Einschränkung -->
+      <mat-divider></mat-divider>
+      <h3 id="RadioGroupLabel">Einschränkung</h3>
+      <mat-radio-group
+        aria-labelledby="RadioGroupRestrictionLabel"
+        class="radio-group"
+        formControlName="worker_restriction"
+        fxLayout="column"
+        fxLayoutAlign="start stretch"
+      >
+        <mat-radio-button class="radio-button" id="no work" [value]="'3'">
+          Ich kann nicht mehr arbeiten
+          <mat-icon>sentiment_very_dissatisfied</mat-icon>
+        </mat-radio-button>
+        <mat-radio-button class="radio-button" id="ok" [value]="'2'">
+          Vorerst in Ordnung <mat-icon>sentiment_dissatisfied</mat-icon>
+        </mat-radio-button>
+        <mat-radio-button class="radio-button" id="none" [value]="'1'">
+          Keine Einschränkungen<mat-icon>mood</mat-icon>
+        </mat-radio-button>
+      </mat-radio-group>
+      <div class="stepperbuttons">
+        <button mat-stroked-button matStepperPrevious>Zurück</button>
+        <button mat-stroked-button (click)="submitTicket()">Abschicken</button>
+      </div>
+    </form>
+  </mat-step>
+</mat-stepper>
