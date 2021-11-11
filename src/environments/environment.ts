@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  sessiontokenname: 'maintenancegate_session_token',
+  sessiontokenlabel: 'Token for maintenance.gate',
+  sessionuserlabel: 'Username for maintenance.gate',
 };
 
 /*

@@ -1,5 +1,5 @@
 export class Attachment {
-  filename: '';
-  data: '';
+  filename: string = '';
+  data: string = '';
   'mime-type': 'text/plain';
 }

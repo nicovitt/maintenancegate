@@ -1,1 +1,25 @@
-<p>authentication works!</p>
+<form fxLayout="column" fxLayoutAlign="start stretch">
+  <mat-form-field>
+    <input
+      matInput
+      [(ngModel)]="username"
+      name="username"
+      placeholder="Benutzername"
+      autocomplete="off"
+      autocapitalize="off"
+    />
+    <!-- oninput="this.value = this.value.toLowerCase()" -->
+  </mat-form-field>
+
+  <mat-form-field>
+    <input
+      matInput
+      [(ngModel)]="password"
+      name="password"
+      placeholder="Passwort"
+      type="password"
+    />
+  </mat-form-field>
+
+  <button mat-raised-button color="accent" (click)="login()">Anmelden</button>
+</form>

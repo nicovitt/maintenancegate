@@ -7,18 +7,34 @@
       <!-- Kategorieauswahl -->
       <mat-form-field appearance="fill">
         <mat-label>Störgrund</mat-label>
-        <mat-select formControlName="category" required>
-          <ng-container *ngFor="let category of categories">
+        <input
+          type="text"
+          matInput
+          required
+          placeholder="Störgrund eingeben..."
+          aria-label="Stoergrund"
+          formControlName="category"
+          [matAutocomplete]="faultautocomplete"
+        />
+        <mat-autocomplete #faultautocomplete="matAutocomplete">
+          <mat-optgroup
+            *ngFor="let cat of filteredFaultcategories | async"
+            [label]="cat.title"
+          >
             <mat-option
-              *ngIf="category.text != 'divider'"
-              [value]="category.text"
-              >{{ category.text }}</mat-option
+              *ngFor="let subcat of cat.subCategories"
+              [value]="subcat.title"
             >
-            <mat-option *ngIf="category.text == 'divider'" disabled>
-              <mat-divider></mat-divider>
+              {{ subcat.title }}
             </mat-option>
-          </ng-container>
-        </mat-select>
+          </mat-optgroup>
+          <mat-option value="Anderer">
+            <span fxLayout="row" fxLayoutAlign="start center">
+              <mat-icon>add_circle_outline</mat-icon>
+              Anderer
+            </span>
+          </mat-option>
+        </mat-autocomplete>
         <mat-error
           *ngIf="
             formGroup.get(['category'])!.hasError('required') &&
@@ -90,17 +106,29 @@
       <!-- Eingabefeld für den Arbeitsplatz, aktuell wird der Werker als Nummer gespeichert -->
       <mat-form-field>
         <mat-label>Arbeitsplatz</mat-label>
-        <mat-select formControlName="workplace" required>
-          <!-- <mat-option
-              *ngFor="let workplaceName of _wpNameList"
-              [value]="workplaceName.text"
-              >{{ workplaceName.text }}
-            </mat-option> -->
-          <span class="mat-option" fxLayout="row" fxLayoutAlign="start center">
-            <mat-icon>add_circle_outline</mat-icon>
-            <mat-option value="Sonstiger"> Sonstiger </mat-option>
-          </span>
-        </mat-select>
+        <input
+          type="text"
+          required
+          placeholder="Auswählen"
+          aria-label="Arbeitsplatz"
+          matInput
+          formControlName="workplace"
+          [matAutocomplete]="workplaceautocomplete"
+        />
+        <mat-autocomplete #workplaceautocomplete="matAutocomplete">
+          <mat-option
+            *ngFor="let workplace of filteredWorkplacecategories | async"
+            [value]="workplace.title"
+          >
+            {{ workplace.title }} {{ workplace.description }}
+          </mat-option>
+          <mat-option value="Anderer">
+            <span fxLayout="row" fxLayoutAlign="start center">
+              <mat-icon>add_circle_outline</mat-icon>
+              Anderer
+            </span>
+          </mat-option>
+        </mat-autocomplete>
         <mat-error
           *ngIf="
             formGroup.get(['workplace'])!.hasError('required') &&
@@ -133,42 +161,27 @@
     </form>
   </mat-step>
   <mat-step [stepControl]="formGroup">
+    <!-- <video #video playsinline autoplay muted></video> -->
+
     <form [formGroup]="formGroup">
       <ng-template matStepLabel>Bilder und Audio</ng-template>
 
-      <button mat-button (click)="allowPicture()">Bild hinzufügen</button>
-      <!-- TODO START: Camera -->
-      <!-- <video
-          *ngIf="videoCapable"
-          #video1
-          width="300"
-          autoplay
-          class="has-picture"
-        ></video> -->
-      <div *ngIf="!videoCapable">
-        Sie haben die Nutzung der Kamera nicht erlaubt.
-      </div>
-      <!-- <div class="row mb-2" *ngIf="videoCapable">
-        <button class="btn btn-primary btn-lg" (click)="onSnap()">
-          <i class="fa fa-camera"></i> Snap
+      <!-- START SECTION: Add images -->
+      <div fxLayout="row" fxLayoutAlign="space-around center">
+        <input
+          hidden
+          #imageInput
+          type="file"
+          accept="image/*"
+          (change)="onClickCamera($event)"
+        />
+        <button type="button" mat-raised-button (click)="imageInput.click()">
+          Bilder hinzufügen
         </button>
-      </div> -->
-      <div class="row">
-        <canvas
-          #canvas1
-          width="100%"
-          [ngClass]="{ 'has-picture': pictureTaken }"
-        ></canvas>
       </div>
-      <!-- <div class="row mb-5" *ngIf="pictureTaken">
-        <a
-          class="btn btn-primary btn-lg"
-          href="{{ downloadLink }}"
-          download="image.png"
-          ><i class="fa fa-download"></i> Download</a
-        >
-      </div> -->
-      <!-- TODO END -->
+
+      <gallery></gallery>
+      <!-- END SECTION -->
 
       <div class="stepperbuttons">
         <button mat-stroked-button matStepperPrevious>Zurück</button>

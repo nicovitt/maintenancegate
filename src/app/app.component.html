@@ -34,8 +34,8 @@
 
       <mat-toolbar-row
         class="sidenav-entry menu-toolbar-with-icon"
-        routerLink="/logout"
-        (click)="drawer.toggle()"
+        (click)="logout()"
+        *ngIf="isloggedin"
       >
         <mat-icon aria-hidden="false" aria-label="Logout icon">logout</mat-icon>
         <span>Abmelden</span>
@@ -67,6 +67,13 @@
         >menu</mat-icon
       >
     </button>
-    <router-outlet></router-outlet>
+
+    <!-- Shows a progressbar with some functionalities. -->
+    <app-progressbar></app-progressbar>
+
+    <!-- Main output of the content. -->
+    <router-outlet> </router-outlet>
   </div>
 </mat-drawer-container>
+
+<!-- <div>Icons made by <a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp">Eucalyp</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->

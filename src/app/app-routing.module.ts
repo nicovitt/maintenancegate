@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthenticationComponent } from './authentication/authentication.component';
 import { CreateticketComponent } from './createticket/createticket.component';
 import { ListticketComponent } from './listticket/listticket.component';
 
 const routes: Routes = [
+  { path: 'login', component: AuthenticationComponent},
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: ListticketComponent },
   { path: 'newticket', component: CreateticketComponent },
