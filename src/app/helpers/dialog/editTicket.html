@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>Ticket beabreiten</h2>
 <mat-dialog-content>
   <form [formGroup]="formGroup">
-    <div fxLayout="column" fxLayoutAlign="start stretch">
+    <div class="flex_container_column_start_stretch">
       <!-- Kategorieauswahl -->
       <mat-form-field appearance="fill">
         <mat-label>Störgrund</mat-label>
@@ -27,7 +27,7 @@
             </mat-option>
           </mat-optgroup>
           <mat-option value="{{ _workplaceotherlabel }}">
-            <span fxLayout="row" fxLayoutAlign="start center">
+            <span class="flex_container_row_start_center">
               <mat-icon>add_circle_outline</mat-icon>
               Anderer
             </span>
@@ -119,7 +119,7 @@
             {{ workplace.title }} {{ workplace.description }}
           </mat-option>
           <mat-option value="{{ _workplaceotherlabel }}">
-            <span fxLayout="row" fxLayoutAlign="start center">
+            <span class="flex_container_row_start_center">
               <mat-icon>add_circle_outline</mat-icon>
               Anderer
             </span>
@@ -167,7 +167,7 @@
 
     <!-- Stillstand -->
     <h3 id="sliderDowntimeLabel">Vermutete Dauer bis zur Störungsbehebung</h3>
-    <div fxLayout="row" fxLayoutAlign="space-between center">
+    <div class="flex_container_row_spacebetween_center">
       <label class="sliderlabelstart">Minuten</label>
       <mat-slider
         thumbLabel
@@ -184,7 +184,7 @@
     <!-- Häufigkeit -->
     <mat-divider></mat-divider>
     <h3 id="sliderFrequencyLabel">Häufigkeit des Problems</h3>
-    <div fxLayout="row" fxLayoutAlign="space-between center">
+    <div class="flex_container_row_spacebetween_center">
       <label class="sliderlabelstart">Nie</label>
       <mat-slider
         thumbLabel
@@ -203,10 +203,8 @@
     <h3 id="RadioGroupLabel">Einschränkung</h3>
     <mat-radio-group
       aria-labelledby="RadioGroupRestrictionLabel"
-      class="radio-group"
+      class="radio-group flex_container_column_start_stretch"
       formControlName="worker_restriction"
-      fxLayout="column"
-      fxLayoutAlign="start stretch"
     >
       <mat-radio-button class="radio-button" id="no work" [value]="'3'">
         Ich kann nicht mehr arbeiten

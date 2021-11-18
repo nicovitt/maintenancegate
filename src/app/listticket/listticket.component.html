@@ -1,8 +1,7 @@
-<div id="noticketcontainer" fxLayout="row" fxLayoutAlign="center start">
+<div id="noticketcontainer" class="flex_container_row_center_start">
   <div
     *ngIf="ticketList.length == 0"
-    fxLayout="column"
-    fxLayoutAlign="start center"
+    class="flex_container_column_start_center"
   >
     <h6>Nanu? Noch kein Ticket vorhanden?</h6>
     <button mat-flat-button color="accent" routerLink="/newticket">
@@ -10,11 +9,10 @@
     </button>
   </div>
 </div>
-<div fxLayout="row wrap" fxLayoutAlign="start stretch">
+<div class="flex_container_row_start_stretch">
   <mat-card
     class="ticketcard"
     *ngFor="let ticket of ticketList"
-    fxFlex="30"
     [routerLink]="['/ticket', ticket.id]"
   >
     <mat-card-title>{{ ticket.title }}</mat-card-title>

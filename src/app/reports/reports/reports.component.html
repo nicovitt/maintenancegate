@@ -1,8 +1,8 @@
 <div echarts [options]="chartOption" class="demo-chart"></div>
 
 <h1>Machinenbuch</h1>
-<div fxLayout="row wrap" fxLayoutAlign="center start">
-  <div *ngFor="let ticket of machinelist" class="machinecard" fxFlex="30">
+<div class="flex_container_row_start_center">
+  <div *ngFor="let ticket of machinelist" class="machinecard">
     <mat-card>
       <mat-card-title>{{ ticket.name }}</mat-card-title>
       <!-- <mat-card-subtitle>Start</mat-card-subtitle> -->

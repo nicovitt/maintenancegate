@@ -1,4 +1,4 @@
-<div fxLayout="row" fxLayoutAlign="space-between start">
+<div class="flex_container_row_spacebetween_start">
   <h2>{{ ticket.title }} #{{ ticket.id }}</h2>
   <button
     mat-stroked-button
@@ -17,27 +17,23 @@
   <p>Ticket erstellt: {{ ticket.created_at | date: "dd.MM.yyyy HH:mm" }}</p>
   <p>Letztes Update: {{ ticket.updated_at | date: "dd.MM.yyyy HH:mm" }}</p>
 
-  <div
-    class="cardsinformation"
-    fxLayout="row wrap"
-    fxLayoutAlign="space-between start"
-  >
+  <div class="cardsinformation flex_container_row_spacebetween_start">
     <!-- TODO: Störgrund -->
-    <mat-card fxFlex="25">
+    <mat-card class="infocard">
       <mat-card-title>Störgrund</mat-card-title>
       <mat-card-content>
         <p>{{ ticket.maintenancegate_faultcategory.slice(-1)[0].value }}</p>
       </mat-card-content>
     </mat-card>
     <!-- TODO: Arbeitsplatz -->
-    <mat-card fxFlex="25">
+    <mat-card class="infocard">
       <mat-card-title>Arbeitsplatz</mat-card-title>
       <mat-card-content>
         <p>{{ ticket.maintenancegate_workplace.slice(-1)[0].value }}</p>
       </mat-card-content>
     </mat-card>
     <!-- TODO: Priorität -->
-    <mat-card fxFlex="25">
+    <mat-card class="infocard">
       <mat-card-title>Priorität</mat-card-title>
       <mat-card-content>
         <p>{{ ticket.maintenancegate_priority.slice(-1)[0].value }}</p>
