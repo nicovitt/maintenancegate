@@ -1,0 +1,163 @@
+<div fxLayout="row" fxLayoutAlign="space-between start">
+  <h2>{{ ticket.title }} #{{ ticket.id }}</h2>
+  <button
+    mat-stroked-button
+    color="primary"
+    *ngIf="userpermissions.caneditticket"
+    (click)="editTicket()"
+  >
+    Bearbeitungsmodus
+  </button>
+</div>
+
+<!-- TODO: Ticketstatus -->
+<app-fancyprogressbar></app-fancyprogressbar>
+
+<ng-container *ngIf="!progressbar.getshowprogressbar()">
+  <p>Ticket erstellt: {{ ticket.created_at | date: "dd.MM.yyyy HH:mm" }}</p>
+  <p>Letztes Update: {{ ticket.updated_at | date: "dd.MM.yyyy HH:mm" }}</p>
+
+  <div
+    class="cardsinformation"
+    fxLayout="row wrap"
+    fxLayoutAlign="space-between start"
+  >
+    <!-- TODO: Störgrund -->
+    <mat-card fxFlex="25">
+      <mat-card-title>Störgrund</mat-card-title>
+      <mat-card-content>
+        <p>{{ ticket.maintenancegate_faultcategory.slice(-1)[0].value }}</p>
+      </mat-card-content>
+    </mat-card>
+    <!-- TODO: Arbeitsplatz -->
+    <mat-card fxFlex="25">
+      <mat-card-title>Arbeitsplatz</mat-card-title>
+      <mat-card-content>
+        <p>{{ ticket.maintenancegate_workplace.slice(-1)[0].value }}</p>
+      </mat-card-content>
+    </mat-card>
+    <!-- TODO: Priorität -->
+    <mat-card fxFlex="25">
+      <mat-card-title>Priorität</mat-card-title>
+      <mat-card-content>
+        <p>{{ ticket.maintenancegate_priority.slice(-1)[0].value }}</p>
+      </mat-card-content>
+    </mat-card>
+    <!-- TODO: Fälligkeit -->
+  </div>
+
+  <!-- TODO: Articles inkl. neuer Nachricht eingeben -->
+</ng-container>
+
+<mat-accordion>
+  <mat-expansion-panel
+    [expanded]="articlesstep === 0"
+    (opened)="setArticlesStep(0)"
+    *ngIf="userpermissions.caneditticket"
+    hideToggle
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title> Neue Nachricht eingeben</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-form-field class="full-width" appearance="fill">
+      <textarea
+        matInput
+        [(ngModel)]="newArticle.body"
+        rows="3"
+        aria-labelledby="uiNewMessage"
+      ></textarea>
+    </mat-form-field>
+    <mat-action-row>
+      <button mat-stroked-button color="warn" (click)="saveNewArticle()">
+        Speichern
+      </button>
+      <button mat-button color="primary" (click)="nextArticlesStep()">
+        Weiter
+      </button>
+    </mat-action-row>
+  </mat-expansion-panel>
+  <mat-expansion-panel
+    *ngFor="
+      let article of articles | reverseArray;
+      let i = index;
+      trackBy: trackArticleChange
+    "
+    [expanded]="articlesstep === i + 1"
+    (opened)="setArticlesStep(i + 1)"
+    hideToggle
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title> {{ article.subject }} </mat-panel-title>
+      <mat-panel-description
+        >{{ article.from }} am
+        {{ article.created_at | date: "dd.MM.yyyy HH:mm" }}
+        <button
+          mat-icon-button
+          aria-label="Button to copy the text."
+          (click)="copyArticleToClipboard(article.id, $event)"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <p [innerHTML]="article.body | sanitizeHtml" class="show-white-space"></p>
+    <mat-action-row>
+      <button mat-button color="accent" (click)="prevArticlesStep()">
+        Zurück
+      </button>
+      <button mat-button color="primary" (click)="nextArticlesStep()">
+        Weiter
+      </button>
+    </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<!-- TODO: Inputs je nach Rolle des Nutzers: Aufwandsabschätzung -->
+
+<!-- TODO: Bilder inkl. neuen hinzufügen -->
+
+<mat-divider></mat-divider>
+
+<h3>Alle Ereignisse</h3>
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <!-- Label Column -->
+  <ng-container matColumnDef="label">
+    <th mat-header-cell *matHeaderCellDef>Bezeichnung</th>
+    <td mat-cell *matCellDef="let element">{{ element.label }}</td>
+  </ng-container>
+
+  <!-- Value Column -->
+  <ng-container matColumnDef="value">
+    <th mat-header-cell *matHeaderCellDef>Wert</th>
+    <td mat-cell *matCellDef="let element">
+      <div *ngIf="isSliderValue(element); else tablevalueelseblock">
+        <mat-slider
+          thumbLabel
+          tickInterval="1"
+          aria-labelledby="sliderDowntimeLabel"
+          min="0"
+          max="100"
+          step="25"
+          disabled
+          [ngModel]="element.value"
+        ></mat-slider>
+        {{ element.value | formatLabelDowntimeLong }}
+      </div>
+      <ng-template #tablevalueelseblock>
+        {{ element.value | formatLabelRestriction }}
+      </ng-template>
+    </td>
+  </ng-container>
+
+  <!-- Date Column -->
+  <ng-container matColumnDef="date">
+    <th mat-header-cell *matHeaderCellDef>Datum</th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.date | date: "dd.MM.yyyy HH:mm" }}
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

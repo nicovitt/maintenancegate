@@ -1,21 +1,47 @@
-<div *ngFor="let ticket of ticketList">
-  <mat-card class="ticketcard">
+<div id="noticketcontainer" fxLayout="row" fxLayoutAlign="center start">
+  <div
+    *ngIf="ticketList.length == 0"
+    fxLayout="column"
+    fxLayoutAlign="start center"
+  >
+    <h6>Nanu? Noch kein Ticket vorhanden?</h6>
+    <button mat-flat-button color="accent" routerLink="/newticket">
+      Direkt eins anlegen!
+    </button>
+  </div>
+</div>
+<div fxLayout="row wrap" fxLayoutAlign="start stretch">
+  <mat-card
+    class="ticketcard"
+    *ngFor="let ticket of ticketList"
+    fxFlex="30"
+    [routerLink]="['/ticket', ticket.id]"
+  >
     <mat-card-title>{{ ticket.title }}</mat-card-title>
-    <!-- <mat-card-subtitle>{{
-      ticket.maintenancegate_workplace
-    }}</mat-card-subtitle> -->
+    <mat-card-subtitle
+      >Arbeitsplatz:
+      {{
+        ticket.maintenancegate_workplace[
+          ticket.maintenancegate_workplace.length - 1
+        ].value
+      }}</mat-card-subtitle
+    >
     <mat-card-content>
-      <!-- <span class="fielddescription">Kategorie: </span
+      <span class="fielddescription">Kategorie: </span
       ><span>{{ ticket.maintenancegate_kanban_state }}</span
       ><br />
       <span class="fielddescription">Erstellt: </span
-      ><span>{{ ticket.creationdate | date: "dd.MM.yyyy HH:mm" }}</span
+      ><span>{{ ticket.created_at | date: "dd.MM.yyyy HH:mm" }}</span
       ><br />
       <span class="fielddescription">Status: </span
-      ><span>{{ ticket.state | ticketstate }}</span
+      ><span>{{ ticket.maintenancegate_kanban_state }}</span
       ><br />
       <span class="fielddescription">Priorität: </span
-      ><span>{{ ticket.maintenancegate_priority }}</span> -->
+      ><span>{{
+        ticket.maintenancegate_priority[
+          ticket.maintenancegate_priority.length - 1
+        ].value
+      }}</span>
     </mat-card-content>
     <mat-card-actions></mat-card-actions>
   </mat-card>

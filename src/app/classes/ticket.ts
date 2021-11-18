@@ -1,4 +1,3 @@
-import { getLocaleDateTimeFormat } from '@angular/common';
 import { Article } from './article';
 
 export class Ticket {
@@ -28,7 +27,7 @@ export class Ticket {
   // last_contact_customer_at: null;
   // last_owner_update_at: string = '';
   // note: null;
-  // number: string = '';
+  number: string = '';
   // organization_id: number = 0;
   owner_id: number = 0;
   // pending_time: null;
@@ -40,62 +39,68 @@ export class Ticket {
   // update_diff_in_min: null;
   // update_escalation_at: null;
   // update_in_min: null;
-  // updated_at: string = '';
+  updated_at: string = '';
   // updated_by_id: number = 0;
   categorie: number = 0;
-  maintenancegate_kanban_state: number = 0;
+  maintenancegate_kanban_state: number = 1;
   maintenancegate_downtime: Downtime[] = new Array<Downtime>();
   maintenancegate_frequency: Frequency[] = new Array<Frequency>();
   maintenancegate_priority: Priority[] = new Array<Priority>();
   maintenancegate_restriction: Restriction[] = new Array<Restriction>();
   maintenancegate_workplace: Workplace[] = new Array<Workplace>();
+  maintenancegate_faultcategory: Fault[] = new Array<Fault>();
 
   constructor() {
     this.article = new Article();
   }
 }
 
-export class Downtime {
-  constructor(label: string, value: number) {
-    this.label = label;
-    this.value = value;
-  }
-  label: string = '';
-  value: number = 0;
+export interface Downtime {
+  label: string;
+  value: number;
+  date: string;
 }
 
-export class Frequency {
-  constructor(label: string, value: number) {
-    this.label = label;
-    this.value = value;
-  }
-  label: string = '';
-  value: number = 0;
+export interface Frequency {
+  label: string;
+  value: number;
+  date: string;
 }
 
-export class Priority {
-  constructor(label: string, value: number) {
-    this.label = label;
-    this.value = value;
-  }
-  label: string = '';
-  value: number = 0;
+export interface Priority {
+  label: string;
+  value: number;
+  date: string;
 }
 
-export class Restriction {
-  constructor(label: string, value: number) {
-    this.label = label;
-    this.value = value;
-  }
-  label: string = '';
-  value: number = 0;
+export interface Restriction {
+  label: string;
+  value: number;
+  date: string;
 }
 
-export class Workplace {
-  constructor(label: string, value: number) {
-    this.label = label;
-    this.value = value;
+export interface Workplace {
+  label: string;
+  value: number;
+  date: string;
+}
+
+export interface Fault {
+  label: string;
+  value: number;
+  date: string;
+}
+
+export class Generictabledata {
+  label: string;
+  value: number;
+  date: Date;
+
+  constructor(
+    x: Downtime | Frequency | Priority | Restriction | Workplace | Fault
+  ) {
+    this.label = x.label;
+    this.value = x.value;
+    this.date = new Date(Date.parse(x.date));
   }
-  label: string = '';
-  value: number = 0;
 }

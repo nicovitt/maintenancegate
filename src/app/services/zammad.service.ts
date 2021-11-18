@@ -6,10 +6,11 @@ import {
   HttpResponse,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, map, retry } from 'rxjs/operators';
+import { catchError, map, retry, tap } from 'rxjs/operators';
 import { Ticket } from '../classes/ticket';
 import { LocalstorageService } from './localstorage.service';
 import { environment } from '../../environments/environment';
+import { PlainArticlePost } from '../classes/article';
 
 /**
  * TODO: Create an interceptor to handle authentication.
@@ -155,13 +156,49 @@ export class ZammadService {
     );
   }
 
+  showTicket(ticketid: number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json; charset=utf-8',
+      Authorization:
+        'Token token=' + this.lss.getitem(environment.sessiontokenname),
+    });
+    return this.http
+      .get<Array<any>>(
+        'https://zammad-1.zentrum-digitalisierung.de/api/v1/tickets/' +
+          ticketid,
+        { headers: headers }
+      )
+      .pipe(
+        tap((ticket: any) => {
+          ticket.maintenancegate_downtime = JSON.parse(
+            ticket.maintenancegate_downtime.replace(/=>/gm, ':')
+          );
+          ticket.maintenancegate_frequency = JSON.parse(
+            ticket.maintenancegate_frequency.replace(/=>/gm, ':')
+          );
+          ticket.maintenancegate_priority = JSON.parse(
+            ticket.maintenancegate_priority.replace(/=>/gm, ':')
+          );
+          ticket.maintenancegate_restriction = JSON.parse(
+            ticket.maintenancegate_restriction.replace(/=>/gm, ':')
+          );
+          ticket.maintenancegate_workplace = JSON.parse(
+            ticket.maintenancegate_workplace.replace(/=>/gm, ':')
+          );
+          ticket.maintenancegate_faultcategory = JSON.parse(
+            ticket.maintenancegate_faultcategory.replace(/=>/gm, ':')
+          );
+        })
+      );
+  }
+
   listTickets() {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json; charset=utf-8',
       Authorization:
         'Token token=' + this.lss.getitem(environment.sessiontokenname),
     });
-    return this.http.get<Array<Ticket>>(
+    return this.http.get<Array<any>>(
       'https://zammad-1.zentrum-digitalisierung.de/api/v1/tickets',
       { headers: headers }
     );
@@ -176,6 +213,32 @@ export class ZammadService {
     return this.http.post<Ticket>(
       'https://zammad-1.zentrum-digitalisierung.de/api/v1/tickets',
       ticket,
+      { headers: headers, observe: 'response' }
+    );
+  }
+
+  listArticlesByTicket(ticketid: number) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json; charset=utf-8',
+      Authorization:
+        'Token token=' + this.lss.getitem(environment.sessiontokenname),
+    });
+    return this.http.get<Array<any>>(
+      'https://zammad-1.zentrum-digitalisierung.de/api/v1/ticket_articles/by_ticket/' +
+        ticketid,
+      { headers: headers }
+    );
+  }
+
+  createPlainArticle(article: PlainArticlePost): Observable<HttpResponse<any>> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json; charset=utf-8',
+      Authorization:
+        'Token token=' + this.lss.getitem(environment.sessiontokenname),
+    });
+    return this.http.post<any>(
+      'https://zammad-1.zentrum-digitalisierung.de/api/v1/ticket_articles',
+      article,
       { headers: headers, observe: 'response' }
     );
   }

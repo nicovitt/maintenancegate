@@ -28,7 +28,7 @@
               {{ subcat.title }}
             </mat-option>
           </mat-optgroup>
-          <mat-option value="Anderer">
+          <mat-option value="{{ _workplaceotherlabel }}">
             <span fxLayout="row" fxLayoutAlign="start center">
               <mat-icon>add_circle_outline</mat-icon>
               Anderer
@@ -49,8 +49,10 @@
         >
       </mat-form-field>
 
-      <!-- Eine neue Kategorie eingeben, wenn "Anderer" ausgewählt wurde -->
-      <mat-form-field *ngIf="formGroup.get(['category'])!.value == 'Anderer'">
+      <!-- Eine neue Kategorie eingeben, wenn _faultcategoryotherlabel ausgewählt wurde -->
+      <mat-form-field
+        *ngIf="formGroup.get(['category'])!.value == _faultcategoryotherlabel"
+      >
         <input
           matInput
           formControlName="category2"
@@ -122,7 +124,7 @@
           >
             {{ workplace.title }} {{ workplace.description }}
           </mat-option>
-          <mat-option value="Anderer">
+          <mat-option value="{{ _workplaceotherlabel }}">
             <span fxLayout="row" fxLayoutAlign="start center">
               <mat-icon>add_circle_outline</mat-icon>
               Anderer
@@ -142,7 +144,7 @@
       </mat-form-field>
 
       <!-- Eingabefeld für einen NEUEN Arbeitsplatz -->
-      <div *ngIf="formGroup.get(['workplace'])!.value == 'Sonstiger'">
+      <div *ngIf="formGroup.get(['workplace'])!.value == _workplaceotherlabel">
         <mat-form-field>
           <mat-label id="labelWorkplaceName">Arbeitsplatz</mat-label>
           <input

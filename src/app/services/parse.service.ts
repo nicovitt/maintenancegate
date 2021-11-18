@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Faultcategory } from '../classes/faultcategory';
+import { Kanban_Column } from '../classes/kanban';
 import { Workplacecategory } from '../classes/workplacecategory';
 
 const Parse = require('parse');
@@ -10,6 +11,7 @@ const Parse = require('parse');
 export class ParseService {
   private faultCategories: Array<Faultcategory> = [];
   private workplaceCategories: Array<Workplacecategory> = [];
+  private kanbancolumns: Array<Kanban_Column> = [];
   get instance() {
     return Parse;
   }
@@ -43,5 +45,18 @@ export class ParseService {
       this.workplaceCategories = results[i].get('workplaces');
     }
     return this.workplaceCategories;
+  }
+
+  async getKanbanColumns() {
+    const Mandant = this.instance.Object.extend('Mandant');
+    const query = new this.instance.Query(Mandant);
+
+    // TODO: change the domain based on the logged-in user
+    query.equalTo('domain', 'braeuergmbh.de');
+    const results = await query.find();
+    for (let i = 0; i < results.length; i++) {
+      this.kanbancolumns = results[i].get('kanban_columns');
+    }
+    return this.kanbancolumns;
   }
 }

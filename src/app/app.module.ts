@@ -8,12 +8,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { HttpClientModule } from '@angular/common/http';
-import { WorkplaceIdToName } from './helpers/pipes';
 
 // START Components
 import { CreateticketComponent } from './createticket/createticket.component';
 import { ListticketComponent } from './listticket/listticket.component';
 import { AuthenticationComponent } from './authentication/authentication.component';
+import { ViewticketComponent } from './viewticket/viewticket.component';
 // END Components
 
 // START Angular Material
@@ -30,12 +30,10 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 // END Angular Material
-
-// START Dialog
-import { ConfirmationDialog, ErrorDialog } from './services/dialog.service';
-// END Dialog
 
 import { GalleryModule } from 'ng-gallery';
 import { GALLERY_CONFIG } from 'ng-gallery';
@@ -44,7 +42,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProgressbarComponent } from './helpers/progressbar/progressbar.component';
 import { TranslocoRootModule } from './transloco-root.module';
-// import { ReactiveComponentModule } from '@ngrx/component';
+import { HelpersModule } from './helpers/helpers.module';
+import { WorkplaceIdToName } from './helpers/pipes/pipes';
 
 @NgModule({
   declarations: [
@@ -53,17 +52,14 @@ import { TranslocoRootModule } from './transloco-root.module';
     ListticketComponent,
     AuthenticationComponent,
     ProgressbarComponent,
-
-    // START Dialog
-    ConfirmationDialog,
-    ErrorDialog,
-    // END Dialog
+    ViewticketComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    HelpersModule,
 
     // START Angular Material
     MatToolbarModule,
@@ -79,14 +75,15 @@ import { TranslocoRootModule } from './transloco-root.module';
     MatProgressBarModule,
     MatCardModule,
     MatAutocompleteModule,
-    MatDialogModule,
+    MatTableModule,
+    MatExpansionModule,
+    MatSnackBarModule,
     // END Angular Material
 
     GalleryModule,
     FlexLayoutModule,
     FormsModule,
     ReactiveFormsModule,
-    // ReactiveComponentModule,
 
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,

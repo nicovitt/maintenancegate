@@ -33,7 +33,7 @@ export class User {
   created_by_id: number = 0;
   created_at: string = '';
   updated_at: string = '';
-  role_ids: Array<any> = [];
+  role_ids: Array<number> = [];
   organization_ids: Array<any> = [];
   authorization_ids: Array<any> = [];
   karma_user_ids: Array<any> = [];

@@ -1,40 +1,33 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgModel, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {
-  Downtime,
-  Frequency,
-  Priority,
-  Restriction,
-  Ticket,
-  Workplace,
-} from '../classes/ticket';
-import { iif, Observable } from 'rxjs';
+import { Ticket } from '../classes/ticket';
+import { Observable } from 'rxjs';
 import { DialogService } from '../services/dialog.service';
 import { ParseService } from '../services/parse.service';
 import { map, startWith } from 'rxjs/operators';
 import { Faultcategory } from '../classes/faultcategory';
 import { Workplacecategory } from '../classes/workplacecategory';
 import { ProgressbarService } from '../services/progressbar.service';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { GalleryComponent } from 'ng-gallery';
-import { WorkplaceIdToName } from '../helpers/pipes';
 import { LocalstorageService } from '../services/localstorage.service';
 import { environment } from '../../environments/environment';
 import { TicketService } from '../services/ticket.service';
-import { getLocaleDateTimeFormat } from '@angular/common';
 import { ZammadService } from '../services/zammad.service';
 import { User } from '../classes/user';
 import { ImageService } from '../services/image.service';
 import { HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { WorkplaceIdToName } from '../helpers/pipes/pipes';
 
-@UntilDestroy()
 @Component({
   selector: 'app-createticket',
   templateUrl: './createticket.component.html',
   styleUrls: ['./createticket.component.scss'],
 })
 export class CreateticketComponent implements OnInit {
+  public _faultcategoryotherlabel = 'Sonstiger';
+  public _workplaceotherlabel = 'Sonstiger';
+
   @ViewChild('categorieformcontrol', { static: true })
   categorieformcontrol!: NgModel;
   @ViewChild(GalleryComponent) gallery: GalleryComponent;
@@ -63,22 +56,22 @@ export class CreateticketComponent implements OnInit {
     private dialogService: DialogService,
     private parseService: ParseService,
     private progressbar: ProgressbarService,
-    private pipe_workplaceidtoname: WorkplaceIdToName,
     private lss: LocalstorageService,
     private ticketService: TicketService,
     private zammadService: ZammadService,
     private imageService: ImageService,
-    private router: Router
+    private router: Router,
+    private pipe_workplaceidtoname: WorkplaceIdToName
   ) {}
 
   async ngOnInit() {
     this.progressbar.toggleProgressBar();
 
     this.formGroup = this._formBuilder.group({
-      title: ['Test 1', Validators.required],
+      title: ['', Validators.required],
       category: ['', Validators.required],
       category2: [''],
-      message: ['fmiweomf wf wfwefwfew  \nnjeqw äü'],
+      message: [''],
       workplace: ['', Validators.required],
       workplace2: [''],
       photos: ['', Validators.required],
@@ -178,41 +171,48 @@ export class CreateticketComponent implements OnInit {
 
       this.ticket.title = this.formGroup.get('title').value;
       this.ticket.customer = this.lss.getitem(environment.sessionuserlabel);
-      this.ticket.maintenancegate_downtime.push(
-        new Downtime(
-          'downtime_worker_' + now,
-          this.formGroup.get('worker_downtime').value
-        )
-      );
-      this.ticket.maintenancegate_frequency.push(
-        new Frequency(
-          'frequency_worker_' + now,
-          this.formGroup.get('worker_frequency').value
-        )
-      );
-      this.ticket.maintenancegate_restriction.push(
-        new Restriction(
-          'restriction_worker_' + now,
-          this.formGroup.get('worker_restriction').value
-        )
-      );
-      this.ticket.maintenancegate_workplace.push(
-        new Workplace(
-          'workpalce_worker_' + now,
-          this.formGroup.get('workplace').value
-        )
-      );
-      this.ticket.maintenancegate_priority.push(
-        new Priority(
-          'worker_priority_' + now,
-          this.ticketService.calculatepriority(
-            this.formGroup.get('worker_downtime').value,
-            this.formGroup.get('worker_frequency').value,
-            this.formGroup.get('worker_restriction').value
-          )
-        )
-      );
 
+      this.ticket.maintenancegate_downtime.push({
+        label: 'worker_downtime',
+        value: this.formGroup.get('worker_downtime').value,
+        date: now,
+      });
+      this.ticket.maintenancegate_frequency.push({
+        label: 'worker_frequency',
+        value: this.formGroup.get('worker_frequency').value,
+        date: now,
+      });
+      this.ticket.maintenancegate_restriction.push({
+        label: 'worker_restriction',
+        value: this.formGroup.get('worker_restriction').value,
+        date: now,
+      });
+      this.ticket.maintenancegate_workplace.push({
+        label: 'worker_workplace',
+        value:
+          this.formGroup.get('workplace').value == this._workplaceotherlabel
+            ? this.formGroup.get('workplace').value
+            : this.formGroup.get('workplace2').value,
+        date: now,
+      });
+      this.ticket.maintenancegate_faultcategory.push({
+        label: 'worker_faultcategory',
+        value:
+          this.formGroup.get('category').value == this._faultcategoryotherlabel
+            ? this.formGroup.get('category2').value
+            : this.formGroup.get('category').value,
+        date: now,
+      });
+      this.ticket.maintenancegate_priority.push({
+        label: 'worker_priority',
+        value: this.ticketService.calculatepriority(
+          this.formGroup.get('worker_downtime').value,
+          this.formGroup.get('worker_frequency').value,
+          this.formGroup.get('worker_restriction').value
+        ),
+        date: now,
+      });
+      // Send the ticket to zammad
       this.zammadService.postTicket(this.ticket).subscribe(
         (response: HttpResponse<Ticket>) => {
           if (response.status == 201) {

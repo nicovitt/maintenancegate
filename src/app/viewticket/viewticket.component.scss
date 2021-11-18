@@ -1,0 +1,23 @@
+table,
+.full-width {
+  width: 100%;
+}
+
+.show-white-space {
+  white-space: pre-wrap;
+}
+
+.cardsinformation {
+  margin-top: 100px;
+  margin-bottom: 100px;
+}
+
+.mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}

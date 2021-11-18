@@ -1,0 +1,247 @@
+<h2 mat-dialog-title>Ticket beabreiten</h2>
+<mat-dialog-content>
+  <form [formGroup]="formGroup">
+    <div fxLayout="column" fxLayoutAlign="start stretch">
+      <!-- Kategorieauswahl -->
+      <mat-form-field appearance="fill">
+        <mat-label>Störgrund</mat-label>
+        <input
+          type="text"
+          matInput
+          required
+          placeholder="Störgrund eingeben..."
+          aria-label="Stoergrund"
+          formControlName="category"
+          [matAutocomplete]="faultautocomplete"
+        />
+        <mat-autocomplete #faultautocomplete="matAutocomplete">
+          <mat-optgroup
+            *ngFor="let cat of filteredFaultcategories | async"
+            [label]="cat.title"
+          >
+            <mat-option
+              *ngFor="let subcat of cat.subCategories"
+              [value]="subcat.title"
+            >
+              {{ subcat.title }}
+            </mat-option>
+          </mat-optgroup>
+          <mat-option value="{{ _workplaceotherlabel }}">
+            <span fxLayout="row" fxLayoutAlign="start center">
+              <mat-icon>add_circle_outline</mat-icon>
+              Anderer
+            </span>
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error
+          *ngIf="
+                  formGroup.get(['category'])!.hasError('required') &&
+                  (formGroup.get(['category'])!.dirty ||
+                    formGroup.get(['category'])!.touched)
+                "
+        >
+          Bitte wählen Sie einen Störgrund.</mat-error
+        >
+        <mat-hint
+          >Sonstiges wählen, wenn keiner der Störgründe zutrifft.</mat-hint
+        >
+      </mat-form-field>
+
+      <!-- Eine neue Kategorie eingeben, wenn _faultcategoryotherlabel ausgewählt wurde -->
+      <mat-form-field
+        *ngIf="formGroup.get(['category'])!.value == _faultcategoryotherlabel"
+      >
+        <input
+          matInput
+          formControlName="category2"
+          placeholder="Neuen Störgrund eingeben ..."
+          aria-labelledby="labelWorkplaceName"
+          autocomplete="off"
+        />
+        <mat-hint>(optional)</mat-hint>
+      </mat-form-field>
+
+      <mat-divider></mat-divider>
+      <!-- Eingabefeld für den Titel des Tickets-->
+      <mat-form-field>
+        <mat-label>Titel</mat-label>
+        <input
+          matInput
+          formControlName="title"
+          aria-labelledby="labelTitle"
+          autocomplete="off"
+          required
+        />
+        <mat-error
+          *ngIf="
+                  formGroup.get(['title'])!.hasError('required') &&
+                  (formGroup.get(['title'])!.dirty ||
+                    formGroup.get(['title'])!.touched)
+                "
+          >Bitte geben Sie einen Titel an.</mat-error
+        >
+        <mat-hint>Kurzbeschreibung in wenigen Worten. </mat-hint>
+      </mat-form-field>
+
+      <mat-divider></mat-divider>
+
+      <!-- Eingabebereich für die Beschreibung des Tickets-->
+      <mat-form-field>
+        <mat-label id="labelMessage">Nachricht</mat-label>
+        <textarea
+          matInput
+          formControlName="message"
+          placeholder="{{ formGroup.get(['message'])!.value }}"
+          rows="4"
+          aria-labelledby="labelMessage"
+        ></textarea>
+        <mat-hint>(optional) Beschreibung des Fehlers. </mat-hint>
+      </mat-form-field>
+
+      <mat-divider></mat-divider>
+      <!-- Eingabefeld für den Arbeitsplatz, aktuell wird der Werker als Nummer gespeichert -->
+      <mat-form-field>
+        <mat-label>Arbeitsplatz</mat-label>
+        <input
+          type="text"
+          required
+          placeholder="Auswählen"
+          aria-label="Arbeitsplatz"
+          matInput
+          formControlName="workplace"
+          [matAutocomplete]="workplaceautocomplete"
+        />
+        <mat-autocomplete #workplaceautocomplete="matAutocomplete">
+          <mat-option
+            *ngFor="let workplace of filteredWorkplacecategories | async"
+            [value]="workplace.title"
+          >
+            {{ workplace.title }} {{ workplace.description }}
+          </mat-option>
+          <mat-option value="{{ _workplaceotherlabel }}">
+            <span fxLayout="row" fxLayoutAlign="start center">
+              <mat-icon>add_circle_outline</mat-icon>
+              Anderer
+            </span>
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error
+          *ngIf="
+                  formGroup.get(['workplace'])!.hasError('required') &&
+                  (formGroup.get(['workplace'])!.dirty ||
+                    formGroup.get(['workplace'])!.touched)
+                "
+        >
+          Bitte wählen Sie einen Arbeitsplatz.</mat-error
+        >
+        <mat-hint>Arbeitsplatz auswählen.</mat-hint>
+      </mat-form-field>
+
+      <!-- Eingabefeld für einen NEUEN Arbeitsplatz -->
+      <div *ngIf="formGroup.get(['workplace'])!.value == _workplaceotherlabel">
+        <mat-form-field>
+          <mat-label id="labelWorkplaceName">Arbeitsplatz</mat-label>
+          <input
+            matInput
+            formControlName="workplace2"
+            placeholder="Arbeitsplatz"
+            aria-labelledby="labelWorkplaceName"
+          />
+          <mat-hint>(optional)</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <mat-divider></mat-divider>
+      <mat-form-field>
+        <mat-label id="labelDueDateName">Fälligkeitsdatum</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate formControlName="start" />
+          <input matEndDate formControlName="end" />
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker touchUi #picker></mat-date-range-picker>
+        <mat-hint>(optional)</mat-hint>
+      </mat-form-field>
+    </div>
+    <mat-divider></mat-divider>
+
+    <!-- Stillstand -->
+    <h3 id="sliderDowntimeLabel">Vermutete Dauer bis zur Störungsbehebung</h3>
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <label class="sliderlabelstart">Minuten</label>
+      <mat-slider
+        thumbLabel
+        tickInterval="1"
+        formControlName="worker_downtime"
+        aria-labelledby="sliderDowntimeLabel"
+        min="0"
+        max="100"
+        step="25"
+      ></mat-slider>
+      <label class="sliderlabelend">Wochen</label>
+    </div>
+
+    <!-- Häufigkeit -->
+    <mat-divider></mat-divider>
+    <h3 id="sliderFrequencyLabel">Häufigkeit des Problems</h3>
+    <div fxLayout="row" fxLayoutAlign="space-between center">
+      <label class="sliderlabelstart">Nie</label>
+      <mat-slider
+        thumbLabel
+        tickInterval="1"
+        formControlName="worker_frequency"
+        aria-labelledby="sliderFrequencyLabel"
+        min="0"
+        max="100"
+        step="25"
+      ></mat-slider>
+      <label class="sliderlabelend">Immer</label>
+    </div>
+
+    <!-- Einschränkung -->
+    <mat-divider></mat-divider>
+    <h3 id="RadioGroupLabel">Einschränkung</h3>
+    <mat-radio-group
+      aria-labelledby="RadioGroupRestrictionLabel"
+      class="radio-group"
+      formControlName="worker_restriction"
+      fxLayout="column"
+      fxLayoutAlign="start stretch"
+    >
+      <mat-radio-button class="radio-button" id="no work" [value]="'3'">
+        Ich kann nicht mehr arbeiten
+        <mat-icon>sentiment_very_dissatisfied</mat-icon>
+      </mat-radio-button>
+      <mat-radio-button class="radio-button" id="ok" [value]="'2'">
+        Vorerst in Ordnung <mat-icon>sentiment_dissatisfied</mat-icon>
+      </mat-radio-button>
+      <mat-radio-button class="radio-button" id="none" [value]="'1'">
+        Keine Einschränkungen<mat-icon>mood</mat-icon>
+      </mat-radio-button>
+    </mat-radio-group>
+  </form>
+
+  <!-- TODO: Titel ändern -->
+
+  <!-- TODO: Status (Kanban_column) ändern -->
+
+  <!-- TODO: Kategorie ändern -->
+
+  <!-- TODO: Arbeitsplatz ändern -->
+
+  <!-- TODO: Priorität ändern -->
+
+  <!-- TODO: Fälligkeit ändern -->
+
+  <!-- TODO: Aufwandsabschätzung ändern -->
+
+  <!-- TODO: Häufigkeit ändern -->
+
+  <!-- TODO: Einschränkung ändern -->
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Abbrechen</button>
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>
+    Speichern
+  </button>
+</mat-dialog-actions>
