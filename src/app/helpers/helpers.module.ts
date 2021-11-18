@@ -26,7 +26,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { GalleryModule } from 'ng-gallery';
-import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 @NgModule({
   declarations: [
@@ -47,7 +47,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FormsModule,
     ReactiveFormsModule,
     GalleryModule,
-    FlexLayoutModule,
     MatMomentDateModule,
 
     // START Angular Material

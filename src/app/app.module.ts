@@ -38,7 +38,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { GalleryModule } from 'ng-gallery';
 import { GALLERY_CONFIG } from 'ng-gallery';
 import { CookieService } from 'ngx-cookie-service';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProgressbarComponent } from './helpers/progressbar/progressbar.component';
 import { TranslocoRootModule } from './transloco-root.module';
@@ -81,7 +80,6 @@ import { WorkplaceIdToName } from './helpers/pipes/pipes';
     // END Angular Material
 
     GalleryModule,
-    FlexLayoutModule,
     FormsModule,
     ReactiveFormsModule,
 
