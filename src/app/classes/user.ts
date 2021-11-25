@@ -38,6 +38,7 @@ export class User {
   authorization_ids: Array<any> = [];
   karma_user_ids: Array<any> = [];
   group_ids: GroupId<number>;
+  maintenancegate_parse_domainname: string = '';
 }
 
 type GroupId<T extends number> = {

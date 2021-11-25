@@ -32,3 +32,16 @@
 #content {
   margin: 30px 60px 60px 60px;
 }
+
+.toolbar-footer {
+  position: fixed;
+  bottom: 0;
+  margin-bottom: 30px;
+  > * {
+    margin-top: 10px;
+  }
+
+  .versionnumber {
+    cursor: pointer;
+  }
+}

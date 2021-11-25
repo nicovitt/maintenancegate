@@ -1,16 +1,12 @@
 import { Injectable } from '@angular/core';
-import {
-  HttpClient,
-  HttpHeaders,
-  HttpParams,
-  HttpResponse,
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map, retry, tap } from 'rxjs/operators';
-import { Ticket } from '../classes/ticket';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { Ticket, TicketCreateRequest } from '../classes/ticket';
 import { LocalstorageService } from './localstorage.service';
 import { environment } from '../../environments/environment';
 import { PlainArticlePost } from '../classes/article';
+import { User } from '../classes/user';
 
 /**
  * TODO: Create an interceptor to handle authentication.
@@ -21,42 +17,60 @@ import { PlainArticlePost } from '../classes/article';
 export class ZammadService {
   constructor(private http: HttpClient, private lss: LocalstorageService) {}
 
-  getUser() {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json; charset=utf-8',
-      Authorization:
-        'Token token=' + this.lss.getitem(environment.sessiontokenname),
-    });
-    return this.http.get(
-      'https://zammad-1.zentrum-digitalisierung.de/api/v1/users',
-      {
-        headers: headers,
-      }
-    );
+  /**
+   *
+   * @param username
+   * @param password
+   * @returns Provides an access token which is stored and can be used for further requests until logout.
+   */
+  async authorize(username: string, password: string): Promise<boolean> {
+    // First check whether the current token is useable
+    return this.checkSession()
+      .then((resolved: boolean) => {
+        if (!resolved) {
+          // The session is not valid anymore and a new one has to be set up with the provided credentials.
+          return this.createnewsession(username, password);
+        } else {
+          // The session is valid and the accesstoken will be returned.
+          return new Promise<boolean>((resolve, reject) => {
+            resolve(true);
+          });
+        }
+      })
+      .catch(() => {
+        // There was an error in calling the backend.
+        return new Promise<boolean>((resolve, reject) => {
+          reject(false);
+        });
+      });
   }
 
-  checkSession(): Promise<boolean> {
+  logout() {
+    // TODO: Remove the token in zammad aswell.
+
+    // Remove token from local storage
+    this.lss.removeitem(environment.sessiontokenname);
+    this.lss.removeitem(environment.sessionuserlabel);
+  }
+
+  private checkSession(): Promise<boolean> {
     if (this.lss.getitem(environment.sessiontokenname)) {
-      const headers = new HttpHeaders({
-        'Content-Type': 'application/json; charset=utf-8',
-        Authorization:
-          'Token token=' + this.lss.getitem(environment.sessiontokenname),
-      });
       return new Promise((resolve, reject) => {
-        this.http
-          .get('https://zammad-1.zentrum-digitalisierung.de/api/v1/users/me', {
-            headers: headers,
-          })
-          .subscribe(
-            (value: any) => {
-              // console.log(value);
+        this.getUser().subscribe(
+          (value: HttpResponse<any>) => {
+            if (value.status == 200) {
               resolve(true);
-            },
-            (error: any) => {
-              console.log(error);
-              reject(false);
             }
-          );
+            // The endpoint can not be reached (perhaps unauthorized). Remove the sessiontoken from local storage.
+            this.logout();
+            resolve(false);
+          },
+          () => {
+            // The endpoint can not be reached (perhaps unauthorized). Remove the sessiontoken from local storage.
+            this.logout();
+            reject(false);
+          }
+        );
       });
     } else {
       return new Promise((resolve, reject) => {
@@ -65,23 +79,20 @@ export class ZammadService {
     }
   }
 
-  /**
-   *
-   * @param username
-   * @param password
-   * @returns Provides an access token which is stored and can be used for further requests until logout.
-   */
-  authorize(username: string, password: string): Promise<boolean> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json; charset=utf-8',
-      Authorization: 'Basic ' + btoa(username + ':' + password),
-    });
-
+  private createnewsession(
+    username: string,
+    password: string
+  ): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.http
         .get(
           'https://zammad-1.zentrum-digitalisierung.de/api/v1/user_access_token',
-          { headers: headers }
+          {
+            headers: this._createHeadersWithBasicAuthorization(
+              username,
+              password
+            ),
+          }
         )
         .subscribe((data: any) => {
           // Remove old token if existing
@@ -93,7 +104,12 @@ export class ZammadService {
                   .delete(
                     'https://zammad-1.zentrum-digitalisierung.de/api/v1/user_access_token/' +
                       token['id'],
-                    { headers: headers }
+                    {
+                      headers: this._createHeadersWithBasicAuthorization(
+                        username,
+                        password
+                      ),
+                    }
                   )
                   .subscribe(
                     (value) => {
@@ -116,7 +132,12 @@ export class ZammadService {
                 permission: ['cti.agent', 'ticket.agent'],
                 expires_at: null as any,
               },
-              { headers: headers }
+              {
+                headers: this._createHeadersWithBasicAuthorization(
+                  username,
+                  password
+                ),
+              }
             )
             .subscribe(
               (value: any) => {
@@ -136,37 +157,32 @@ export class ZammadService {
     });
   }
 
-  logout() {
-    // TODO: Remove the token in zammad aswell.
-
-    // Remove token from local storage
-    this.lss.removeitem(environment.sessiontokenname);
-    this.lss.removeitem(environment.sessionuserlabel);
+  getUser(): Observable<HttpResponse<User>> {
+    return this.http.get<User>(
+      'https://zammad-1.zentrum-digitalisierung.de/api/v1/users',
+      {
+        headers: this._createHeadersWithTokenAuthorization(),
+        observe: 'response',
+      }
+    );
   }
 
-  getCurrentUserDetails() {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json; charset=utf-8',
-      Authorization:
-        'Token token=' + this.lss.getitem(environment.sessiontokenname),
-    });
+  getCurrentUserDetails(): Observable<HttpResponse<any>> {
     return this.http.get(
       'https://zammad-1.zentrum-digitalisierung.de/api/v1/users/me',
-      { headers: headers }
+      {
+        headers: this._createHeadersWithTokenAuthorization(),
+        observe: 'response',
+      }
     );
   }
 
   showTicket(ticketid: number) {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json; charset=utf-8',
-      Authorization:
-        'Token token=' + this.lss.getitem(environment.sessiontokenname),
-    });
     return this.http
       .get<Array<any>>(
         'https://zammad-1.zentrum-digitalisierung.de/api/v1/tickets/' +
           ticketid,
-        { headers: headers }
+        { headers: this._createHeadersWithTokenAuthorization() }
       )
       .pipe(
         tap((ticket: any) => {
@@ -188,58 +204,104 @@ export class ZammadService {
           ticket.maintenancegate_faultcategory = JSON.parse(
             ticket.maintenancegate_faultcategory.replace(/=>/gm, ':')
           );
+          ticket.maintenancegate_duedate = JSON.parse(
+            ticket.maintenancegate_duedate.replace(/=>/gm, ':')
+          );
         })
       );
   }
 
   listTickets() {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json; charset=utf-8',
-      Authorization:
-        'Token token=' + this.lss.getitem(environment.sessiontokenname),
-    });
-    return this.http.get<Array<any>>(
-      'https://zammad-1.zentrum-digitalisierung.de/api/v1/tickets',
-      { headers: headers }
-    );
+    return this.http
+      .get<Array<any>>(
+        'https://zammad-1.zentrum-digitalisierung.de/api/v1/tickets',
+        { headers: this._createHeadersWithTokenAuthorization() }
+      )
+      .pipe(
+        tap((tickets: any) => {
+          tickets.forEach((ticket: any) => {
+            ticket.maintenancegate_downtime = JSON.parse(
+              ticket.maintenancegate_downtime.replace(/=>/gm, ':')
+            );
+            ticket.maintenancegate_frequency = JSON.parse(
+              ticket.maintenancegate_frequency.replace(/=>/gm, ':')
+            );
+            ticket.maintenancegate_priority = JSON.parse(
+              ticket.maintenancegate_priority.replace(/=>/gm, ':')
+            );
+            ticket.maintenancegate_restriction = JSON.parse(
+              ticket.maintenancegate_restriction.replace(/=>/gm, ':')
+            );
+            ticket.maintenancegate_workplace = JSON.parse(
+              ticket.maintenancegate_workplace.replace(/=>/gm, ':')
+            );
+            ticket.maintenancegate_faultcategory = JSON.parse(
+              ticket.maintenancegate_faultcategory.replace(/=>/gm, ':')
+            );
+            ticket.maintenancegate_duedate = JSON.parse(
+              ticket.maintenancegate_duedate.replace(/=>/gm, ':')
+            );
+          });
+        })
+      );
   }
 
-  postTicket(ticket: Ticket): Observable<HttpResponse<Ticket>> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json; charset=utf-8',
-      Authorization:
-        'Token token=' + this.lss.getitem(environment.sessiontokenname),
-    });
+  postTicket(ticket: TicketCreateRequest): Observable<HttpResponse<Ticket>> {
     return this.http.post<Ticket>(
       'https://zammad-1.zentrum-digitalisierung.de/api/v1/tickets',
       ticket,
-      { headers: headers, observe: 'response' }
+      {
+        headers: this._createHeadersWithTokenAuthorization(),
+        observe: 'response',
+      }
+    );
+  }
+
+  updateTicket(ticket: Ticket): Observable<HttpResponse<Ticket>> {
+    return this.http.put<Ticket>(
+      'https://zammad-1.zentrum-digitalisierung.de/api/v1/tickets/' + ticket.id,
+      ticket,
+      {
+        headers: this._createHeadersWithTokenAuthorization(),
+        observe: 'response',
+      }
     );
   }
 
   listArticlesByTicket(ticketid: number) {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json; charset=utf-8',
-      Authorization:
-        'Token token=' + this.lss.getitem(environment.sessiontokenname),
-    });
     return this.http.get<Array<any>>(
       'https://zammad-1.zentrum-digitalisierung.de/api/v1/ticket_articles/by_ticket/' +
         ticketid,
-      { headers: headers }
+      { headers: this._createHeadersWithTokenAuthorization() }
     );
   }
 
   createPlainArticle(article: PlainArticlePost): Observable<HttpResponse<any>> {
-    const headers = new HttpHeaders({
+    return this.http.post<any>(
+      'https://zammad-1.zentrum-digitalisierung.de/api/v1/ticket_articles',
+      article,
+      {
+        headers: this._createHeadersWithTokenAuthorization(),
+        observe: 'response',
+      }
+    );
+  }
+
+  private _createHeadersWithTokenAuthorization(): HttpHeaders {
+    return new HttpHeaders({
       'Content-Type': 'application/json; charset=utf-8',
       Authorization:
         'Token token=' + this.lss.getitem(environment.sessiontokenname),
     });
-    return this.http.post<any>(
-      'https://zammad-1.zentrum-digitalisierung.de/api/v1/ticket_articles',
-      article,
-      { headers: headers, observe: 'response' }
-    );
+  }
+
+  private _createHeadersWithBasicAuthorization(
+    username: string,
+    password: string
+  ): HttpHeaders {
+    return new HttpHeaders({
+      'Content-Type': 'application/json; charset=utf-8',
+      Authorization: 'Basic ' + btoa(username + ':' + password),
+    });
   }
 }

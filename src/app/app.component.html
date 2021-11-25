@@ -1,10 +1,21 @@
-<mat-drawer-container hasBackdrop="true" class="content-container" autosize>
-  <mat-drawer #drawer mode="over" class="sidenav">
+<mat-sidenav-container hasBackdrop="true" class="content-container" autosize>
+  <mat-sidenav #sidenav mode="over" class="sidenav">
     <mat-toolbar>
       <mat-toolbar-row
         class="sidenav-entry menu-toolbar-with-icon"
+        routerLink="/login"
+        (click)="sidenav.toggle()"
+        *ngIf="!this.userService.isLoggedIn"
+      >
+        <mat-icon aria-hidden="false" aria-label="Login icon">login</mat-icon>
+        <span>Login</span>
+      </mat-toolbar-row>
+
+      <mat-toolbar-row
+        class="sidenav-entry menu-toolbar-with-icon"
         routerLink="/"
-        (click)="drawer.toggle()"
+        (click)="sidenav.toggle()"
+        *ngIf="this.userService.isLoggedIn"
       >
         <mat-icon aria-hidden="false" aria-label="Ticketüberischt icon"
           >confirmation_number</mat-icon
@@ -15,7 +26,8 @@
       <mat-toolbar-row
         class="sidenav-entry menu-toolbar-with-icon"
         routerLink="/monitor"
-        (click)="drawer.toggle()"
+        (click)="sidenav.toggle()"
+        *ngIf="this.userService.isLoggedIn"
       >
         <mat-icon aria-hidden="false" aria-label="Monitor icon">dvr</mat-icon>
         <span>Monitor</span>
@@ -24,7 +36,8 @@
       <mat-toolbar-row
         class="menu-toolbar-with-icon sidenav-entry"
         routerLink="/reports"
-        (click)="drawer.toggle()"
+        (click)="sidenav.toggle()"
+        *ngIf="this.userService.isLoggedIn"
       >
         <mat-icon aria-hidden="false" aria-label="Berichte icon"
           >summarize</mat-icon
@@ -35,18 +48,18 @@
       <mat-toolbar-row
         class="sidenav-entry menu-toolbar-with-icon"
         (click)="logout()"
-        *ngIf="isloggedin"
+        *ngIf="this.userService.isLoggedIn"
       >
         <mat-icon aria-hidden="false" aria-label="Logout icon">logout</mat-icon>
         <span>Abmelden</span>
       </mat-toolbar-row>
     </mat-toolbar>
 
-    <mat-toolbar color="primary">
+    <mat-toolbar color="primary" *ngIf="this.userService.isLoggedIn">
       <mat-toolbar-row
         class="sidenav-entry menu-toolbar-with-icon"
         routerLink="/newticket"
-        (click)="drawer.toggle()"
+        (click)="sidenav.toggle()"
       >
         <mat-icon aria-hidden="false" aria-label="Add new ticket icon"
           >add</mat-icon
@@ -54,26 +67,36 @@
         <span>Neues Ticket</span>
       </mat-toolbar-row>
     </mat-toolbar>
-  </mat-drawer>
-
-  <div id="content">
-    <button
-      class="menuopener"
-      mat-icon-button
-      (click)="toggleMenuOnButton()"
-      [ngClass]="{ 'menu-open': drawer.opened }"
-    >
-      <mat-icon aria-hidden="false" aria-label="Expand menu icon"
-        >menu</mat-icon
+    <div class="toolbar-footer flex_container_column_start_stretch">
+      <span *ngIf="this.userService.isLoggedIn"
+        >Hallo {{ userService.username }}</span
       >
-    </button>
+      <span
+        class="versionnumber"
+        (click)="updateappService.checkIfUpdateAvailable()"
+        >Version: {{ version }}</span
+      >
+      <a mat-stroked-button href="/impress">Hinweise</a>
+    </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div id="content">
+      <button
+        class="menuopener"
+        mat-icon-button
+        (click)="toggleMenuOnButton()"
+        [ngClass]="{ 'menu-open': sidenav.opened }"
+      >
+        <mat-icon aria-hidden="false" aria-label="Expand menu icon"
+          >menu</mat-icon
+        >
+      </button>
 
-    <!-- Shows a progressbar with some functionalities. -->
-    <app-progressbar></app-progressbar>
+      <!-- Shows a progressbar with some functionalities. -->
+      <app-progressbar></app-progressbar>
 
-    <!-- Main output of the content. -->
-    <router-outlet> </router-outlet>
-  </div>
-</mat-drawer-container>
-
-<!-- <div>Icons made by <a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp">Eucalyp</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+      <!-- Main output of the content. -->
+      <router-outlet> </router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgModel, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Ticket } from '../classes/ticket';
+import { Ticket, TicketCreateRequest } from '../classes/ticket';
 import { Observable } from 'rxjs';
 import { DialogService } from '../services/dialog.service';
 import { ParseService } from '../services/parse.service';
@@ -35,7 +35,7 @@ export class CreateticketComponent implements OnInit {
   public videoCapable = true;
   public pictureTaken = false;
   public downloadLink: string;
-  public ticket: Ticket = new Ticket();
+  public ticket: TicketCreateRequest = new TicketCreateRequest();
 
   // START FormControl
   public formGroup: FormGroup;
@@ -160,7 +160,7 @@ export class CreateticketComponent implements OnInit {
     let now = new Date().toISOString();
 
     this.zammadService.getCurrentUserDetails().subscribe((data) => {
-      const x = data as User;
+      const x = data.body as User;
       this.ticket.group = Object.keys(x.group_ids)[0];
       this.ticket.owner_id = x.id;
 
@@ -191,8 +191,8 @@ export class CreateticketComponent implements OnInit {
         label: 'worker_workplace',
         value:
           this.formGroup.get('workplace').value == this._workplaceotherlabel
-            ? this.formGroup.get('workplace').value
-            : this.formGroup.get('workplace2').value,
+            ? this.formGroup.get('workplace2').value
+            : this.formGroup.get('workplace').value,
         date: now,
       });
       this.ticket.maintenancegate_faultcategory.push({

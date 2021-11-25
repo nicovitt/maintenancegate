@@ -1,6 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDrawer } from '@angular/material/sidenav';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
+import { UpdateappService } from './services/updateapp.service';
+import { UserService } from './services/user.service';
 import { ZammadService } from './services/zammad.service';
 
 @Component({
@@ -11,30 +14,26 @@ import { ZammadService } from './services/zammad.service';
 export class AppComponent implements OnInit {
   title = 'maintenancegate';
   isloggedin = false;
-  @ViewChild('drawer') private drawer!: MatDrawer;
+  public version: string = environment.version;
+  @ViewChild('sidenav') private sidenav!: MatSidenav;
 
-  constructor(private zammadService: ZammadService, private router: Router) {}
+  constructor(
+    private router: Router,
+    public userService: UserService,
+    public updateappService: UpdateappService
+  ) {}
 
-  ngOnInit() {
-    this.zammadService.checkSession().then(
-      (value) => {
-        if (value) {
-          this.isloggedin = true;
-        }
-      },
-      (rejected) => {}
-    );
-  }
+  ngOnInit() {}
 
   toggleMenuOnButton() {
-    this.drawer.toggle();
+    this.sidenav.toggle();
   }
 
   logout() {
     // Delete token in localstorage
-    this.zammadService.logout();
-    // Hide drawer
-    this.drawer.toggle();
+    this.userService.logout();
+    // Hide sidenav
+    this.sidenav.toggle();
     // Redirect to main view
     this.router.navigate(['/login']);
   }

@@ -43,6 +43,9 @@ import { ProgressbarComponent } from './helpers/progressbar/progressbar.componen
 import { TranslocoRootModule } from './transloco-root.module';
 import { HelpersModule } from './helpers/helpers.module';
 import { WorkplaceIdToName } from './helpers/pipes/pipes';
+import { ImpressComponent } from './impress/impress.component';
+import { CanActivateOnAuthenticated } from './helpers/guards/can-activate-on-authenticated';
+import { User } from './classes/user';
 
 @NgModule({
   declarations: [
@@ -52,6 +55,7 @@ import { WorkplaceIdToName } from './helpers/pipes/pipes';
     AuthenticationComponent,
     ProgressbarComponent,
     ViewticketComponent,
+    ImpressComponent,
   ],
   imports: [
     BrowserModule,
@@ -95,6 +99,9 @@ import { WorkplaceIdToName } from './helpers/pipes/pipes';
     CookieService,
     DatePipe,
     WorkplaceIdToName,
+    CanActivateOnAuthenticated,
+    User,
+    Permissions,
     {
       provide: GALLERY_CONFIG,
       useValue: {

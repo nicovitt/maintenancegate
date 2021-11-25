@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { ReportsRoutingModule } from './reports-routing.module';
 import { NgxEchartsModule } from 'ngx-echarts';
-import { FlexLayoutModule } from '@angular/flex-layout';
 
 // START Components
 import { ReportsComponent } from './reports/reports.component';
@@ -27,8 +26,6 @@ import { HelpersModule } from '../helpers/helpers.module';
     MatCardModule,
     MatButtonModule,
     // END Angular Material
-
-    FlexLayoutModule,
 
     NgxEchartsModule.forRoot({
       /**

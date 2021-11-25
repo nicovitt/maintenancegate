@@ -1,8 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { HttpResponse } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTable } from '@angular/material/table';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatSort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Moment } from 'moment';
 import { Article, PlainArticlePost } from '../classes/article';
 import {
   Downtime,
@@ -13,11 +15,14 @@ import {
   Ticket,
   Workplace,
 } from '../classes/ticket';
+import { Workplacecategory } from '../classes/workplacecategory';
 import { DialogService } from '../services/dialog.service';
 import { FancyprogressbarService } from '../services/fancyprogressbar.service';
+import { ParseService } from '../services/parse.service';
 import { ProgressbarService } from '../services/progressbar.service';
 import { SnackbarService } from '../services/snackbar.service';
-import { UserpermissionsService } from '../services/userpermissions.service';
+import { TicketService } from '../services/ticket.service';
+import { UserService } from '../services/user.service';
 import { ZammadService } from '../services/zammad.service';
 
 @Component({
@@ -32,7 +37,10 @@ export class ViewticketComponent implements OnInit {
   public dataSource: Generictabledata[] = [];
   public newArticle: PlainArticlePost = new PlainArticlePost();
   public articlesstep: number = 0;
+  public Workplacecategories: Array<Workplacecategory> = [];
+  public workplacesareloaded = false;
   @ViewChild(MatTable) table: MatTable<Generictabledata>;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private zammadService: ZammadService,
@@ -40,14 +48,22 @@ export class ViewticketComponent implements OnInit {
     public progressbar: ProgressbarService,
     private snackbarService: SnackbarService,
     private fancyprogressbarService: FancyprogressbarService,
-    public userpermissions: UserpermissionsService,
+    public userService: UserService,
     private router: Router,
     private datePipe: DatePipe,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private ticketService: TicketService,
+    private parseService: ParseService
   ) {}
 
   ngOnInit(): void {
     this.progressbar.toggleProgressBar();
+
+    this.parseService.getWorkplaceCategories().then((response) => {
+      this.Workplacecategories = response;
+      this.workplacesareloaded = true;
+    });
+
     this.route.params.subscribe((params) => {
       this.zammadService.showTicket(params['id']).subscribe(
         (ticket: Ticket) => {
@@ -60,9 +76,19 @@ export class ViewticketComponent implements OnInit {
             )
             .map((entry) => {
               this.dataSource.push(new Generictabledata(entry));
+              this.dataSource.sort((firstelem, secondelem) => {
+                if (new Date(firstelem.date) > new Date(secondelem.date)) {
+                  return -1;
+                }
+                if (new Date(firstelem.date) < new Date(secondelem.date)) {
+                  return 1;
+                }
+                return 0;
+              });
               this.table.renderRows();
             });
           this.ticket = ticket;
+          console.log(this.ticket);
 
           this.fancyprogressbarService.animateFancyProgressbar(
             this.ticket.maintenancegate_kanban_state
@@ -113,23 +139,230 @@ export class ViewticketComponent implements OnInit {
       () => {
         this.snackbarService.opensnackbar(
           'Aktuelle Nachricht in die Zwischenablage kopiert.',
-          ''
+          '',
+          30000
         );
       },
       () => {
         this.snackbarService.opensnackbar(
           'Text in Zwischenablage kopieren fehlgeschlagen!',
-          ''
+          '',
+          30000
         );
       }
     );
   }
 
   editTicket() {
-    let dialog = this.dialogService.editTicket(this.ticket);
-  }
+    let dialogRef = this.dialogService.editTicket(this.ticket);
+    dialogRef.afterClosed().subscribe((result: Ticket | Error) => {
+      if (result instanceof Error) {
+        console.log(result.message);
+        return;
+      }
 
-  saveChanges() {}
+      const now = new Date().toISOString();
+      this.ticket.article = new Article();
+      this.ticket.article.subject = 'Ticket geändert.';
+
+      if (this.ticket.title !== result.title) {
+        this.ticket.title = result.title;
+      }
+
+      if (
+        this.ticket.maintenancegate_faultcategory[
+          this.ticket.maintenancegate_faultcategory.length - 1
+        ].value !== result.maintenancegate_faultcategory[0].value
+      ) {
+        this.ticket.article.body +=
+          'Störgrund geändert von ' +
+          this.ticket.maintenancegate_faultcategory[
+            this.ticket.maintenancegate_faultcategory.length - 1
+          ].value +
+          ' nach ' +
+          result.maintenancegate_faultcategory[0].value +
+          '\n';
+        this.ticket.maintenancegate_faultcategory.push(
+          result.maintenancegate_faultcategory[0]
+        );
+      }
+
+      if (
+        this.ticket.maintenancegate_workplace[
+          this.ticket.maintenancegate_workplace.length - 1
+        ].value !== result.maintenancegate_workplace[0].value
+      ) {
+        this.ticket.article.body +=
+          'Arbeitsplatz geändert von ' +
+          this.ticket.maintenancegate_workplace[
+            this.ticket.maintenancegate_workplace.length - 1
+          ].value +
+          ' nach ' +
+          result.maintenancegate_workplace[0].value +
+          '\n';
+        this.ticket.maintenancegate_workplace.push(
+          result.maintenancegate_workplace[0]
+        );
+      }
+
+      if (
+        this.ticket.maintenancegate_downtime[
+          this.ticket.maintenancegate_downtime.length - 1
+        ].value !== result.maintenancegate_downtime[0].value
+      ) {
+        this.ticket.article.body +=
+          'Ausfallzeit geändert von ' +
+          this.ticket.maintenancegate_downtime[
+            this.ticket.maintenancegate_downtime.length - 1
+          ].value +
+          ' nach ' +
+          result.maintenancegate_downtime[0].value +
+          '\n';
+        this.ticket.maintenancegate_downtime.push(
+          result.maintenancegate_downtime[0]
+        );
+      }
+
+      if (
+        this.ticket.maintenancegate_frequency[
+          this.ticket.maintenancegate_frequency.length - 1
+        ].value !== result.maintenancegate_frequency[0].value
+      ) {
+        this.ticket.article.body +=
+          'Häufigkeit geändert von ' +
+          this.ticket.maintenancegate_frequency[
+            this.ticket.maintenancegate_frequency.length - 1
+          ].value +
+          ' nach ' +
+          result.maintenancegate_frequency[0].value +
+          '\n';
+        this.ticket.maintenancegate_frequency.push(
+          result.maintenancegate_frequency[0]
+        );
+      }
+
+      if (
+        this.ticket.maintenancegate_restriction[
+          this.ticket.maintenancegate_restriction.length - 1
+        ].value !== result.maintenancegate_restriction[0].value
+      ) {
+        this.ticket.article.body +=
+          'Einschränkung geändert von ' +
+          this.ticket.maintenancegate_restriction[
+            this.ticket.maintenancegate_restriction.length - 1
+          ].value +
+          ' nach ' +
+          result.maintenancegate_restriction[0].value +
+          '\n';
+        this.ticket.maintenancegate_restriction.push(
+          result.maintenancegate_restriction[0]
+        );
+      }
+
+      if (
+        result.maintenancegate_duedate.length > 0 &&
+        (this.ticket.maintenancegate_duedate[
+          this.ticket.maintenancegate_duedate.length - 1
+        ].start !== result.maintenancegate_duedate[0].start ||
+          this.ticket.maintenancegate_duedate[
+            this.ticket.maintenancegate_duedate.length - 1
+          ].end !== result.maintenancegate_duedate[0].end)
+      ) {
+        this.ticket.article.body +=
+          'Fälligkeitsdatum geändert von ' +
+          this.datePipe.transform(
+            this.ticket.maintenancegate_duedate[
+              this.ticket.maintenancegate_duedate.length - 1
+            ].start,
+            'dd.MM.yyyy HH:mm'
+          ) +
+          ' - ' +
+          this.datePipe.transform(
+            this.ticket.maintenancegate_duedate[
+              this.ticket.maintenancegate_duedate.length - 1
+            ].end,
+            'dd.MM.yyyy HH:mm'
+          ) +
+          ' nach ' +
+          this.datePipe.transform(
+            result.maintenancegate_duedate[0].start,
+            'dd.MM.yyyy HH:mm'
+          ) +
+          ' - ' +
+          this.datePipe.transform(
+            result.maintenancegate_duedate[0].end,
+            'dd.MM.yyyy HH:mm'
+          ) +
+          '\n';
+        this.ticket.maintenancegate_duedate.push(
+          result.maintenancegate_duedate[0]
+        );
+      }
+
+      // Check whether the priority has to be recalculated.
+      if (
+        result.maintenancegate_priority[0].value !==
+        this.ticket.maintenancegate_priority[
+          this.ticket.maintenancegate_priority.length - 1
+        ].value
+      ) {
+        this.ticket.article.body +=
+          'Priorität geändert von ' +
+          this.ticket.maintenancegate_priority[
+            this.ticket.maintenancegate_priority.length - 1
+          ].value +
+          ' nach ' +
+          result.maintenancegate_priority[0].value +
+          '\n';
+        this.ticket.maintenancegate_priority.push({
+          label: 'maintenance_priority',
+          value: this.ticketService.calculatepriority(
+            result.maintenancegate_downtime[0].value,
+            result.maintenancegate_frequency[0].value,
+            result.maintenancegate_restriction[0].value
+          ),
+          date: now,
+        });
+      }
+
+      if (this.ticket.article.body.length > 0) {
+        this.zammadService.updateTicket(this.ticket).subscribe(
+          (response) => {
+            if (response.status == 200) {
+              let dialogRef = this.dialogService.presentConfirmation$({
+                header: 'ticketUpdateSuccess',
+                title:
+                  'Ticket "' +
+                  response.body.title +
+                  '" erfolgreich aktualisiert.',
+                message: 'Das Ticket wurde erfolgreich aktualisiert.',
+              });
+
+              dialogRef.afterClosed().subscribe((result) => {});
+            } else {
+              console.log(response);
+            }
+          },
+          (error) => {
+            let dialogRef = this.dialogService.presentError$({
+              header: 'ticketUpdateError',
+              title: 'Es ist ein Fehler aufgetreten.',
+              message:
+                'Entschuldigung, aber es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder zu einem späteren Zeitpunkt nochmal.',
+            });
+
+            dialogRef.afterClosed().subscribe((result) => {});
+          }
+        );
+      } else {
+        let dialogRef = this.dialogService.presentConfirmation$({
+          header: 'ticketUpdateNotNecessary',
+          title: 'Nichts zu tun...',
+          message: 'Keine Änderungen zum Speichern da.',
+        });
+      }
+    });
+  }
 
   saveNewArticle() {
     if (this.newArticle.body == '') {
@@ -147,18 +380,24 @@ export class ViewticketComponent implements OnInit {
           newarticle.subject = response.body.subject;
           this.newArticle.body = '';
           this.articles.push(newarticle);
-          this.snackbarService.opensnackbar('Neue Notiz hinzugefügt.', '');
+          this.snackbarService.opensnackbar(
+            'Neue Notiz hinzugefügt.',
+            '',
+            30000
+          );
         } else {
           this.snackbarService.opensnackbar(
             'Entschuldigung: Die Nachricht konnte nicht gespeichert werden.',
-            ''
+            '',
+            30000
           );
         }
       },
       (error) => {
         this.snackbarService.opensnackbar(
           'Entschuldigung: Es ist ein Fehler beim Übertragen der Nachricht aufgetreten.',
-          ''
+          '',
+          30000
         );
       }
     );
@@ -169,8 +408,26 @@ export class ViewticketComponent implements OnInit {
     return item.id;
   }
 
-  isSliderValue(element: Generictabledata) {
-    return ['_frequency', '_downtime'].some((searchstring) =>
+  isDowntimeValue(element: Generictabledata) {
+    return ['_downtime'].some((searchstring) =>
+      element.label.includes(searchstring)
+    );
+  }
+
+  isFrequencyValue(element: Generictabledata) {
+    return ['_frequency'].some((searchstring) =>
+      element.label.includes(searchstring)
+    );
+  }
+
+  isRestrictionValue(element: Generictabledata) {
+    return ['_restriction'].some((searchstring) =>
+      element.label.includes(searchstring)
+    );
+  }
+
+  isWorkplaceValue(element: Generictabledata) {
+    return ['_workplace'].some((searchstring) =>
       element.label.includes(searchstring)
     );
   }

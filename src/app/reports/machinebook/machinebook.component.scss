@@ -1,0 +1,13 @@
+.machinecard {
+  max-width: 30%;
+  margin: 10px;
+  -webkit-order: 0;
+  -ms-flex-order: 0;
+  order: 0;
+  -webkit-flex: 30 1 auto;
+  -ms-flex: 30 1 auto;
+  flex: 30 1 auto;
+  -webkit-align-self: auto;
+  -ms-flex-item-align: auto;
+  align-self: auto;
+}

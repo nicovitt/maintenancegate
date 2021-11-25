@@ -53,6 +53,8 @@ export class ReverseArraylPipe {
 export class FormatLabelDowntimeLongPipe {
   transform(value: string) {
     switch (parseInt(value)) {
+      case 0:
+        return 'Unbestimmt';
       case 25:
         return 'Minuten';
       case 50:
@@ -71,6 +73,8 @@ export class FormatLabelDowntimeLongPipe {
 export class FormatLabelDowntimeShortPipe {
   transform(value: string) {
     switch (parseInt(value)) {
+      case 0:
+        return 'Unb.';
       case 25:
         return 'Min.';
       case 50:
@@ -79,6 +83,26 @@ export class FormatLabelDowntimeShortPipe {
         return 'Schi.';
       case 100:
         return 'Wo.';
+      default:
+        return '';
+    }
+  }
+}
+
+@Pipe({ name: 'formatLabelFrequencyLong' })
+export class FormatLabelFrequencyLongPipe {
+  transform(value: string) {
+    switch (parseInt(value)) {
+      case 0:
+        return 'Nie';
+      case 25:
+        return 'Selten';
+      case 50:
+        return 'Häufiger';
+      case 75:
+        return 'Regelmäßig';
+      case 100:
+        return 'Immer';
       default:
         return '';
     }
@@ -98,5 +122,15 @@ export class FormatLabelRestrictionPipe {
       default:
         return '';
     }
+  }
+}
+
+@Pipe({ name: 'formatLabelWorkplace' })
+export class FormatLabelWorkplacePipe {
+  transform(value: string | number, Workplacecategories: Workplacecategory[]) {
+    let workplace = Workplacecategories.find((workplace) => {
+      return workplace.title == value.toString();
+    });
+    return workplace.title + ' ' + workplace.description;
   }
 }

@@ -13,6 +13,19 @@ export class Article {
   }
 }
 
+export class TicketCreateArticleRequest {
+  subject: string = '';
+  body: string = '';
+  content_type: string = 'text/html';
+  type: string = 'note';
+  internal: boolean = false;
+  attachments: Array<Attachment>;
+
+  constructor() {
+    this.attachments = new Array<Attachment>();
+  }
+}
+
 export class PlainArticlePost {
   ticket_id = 0;
   subject = 'Neue Notiz';

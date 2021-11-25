@@ -46,3 +46,6 @@ Thumbs.db
 
 # certificates for local development
 /certificates
+
+# Angular-stuff
+/.angular

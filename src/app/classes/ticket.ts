@@ -1,4 +1,4 @@
-import { Article } from './article';
+import { Article, TicketCreateArticleRequest } from './article';
 
 export class Ticket {
   id: number = null;
@@ -49,9 +49,31 @@ export class Ticket {
   maintenancegate_restriction: Restriction[] = new Array<Restriction>();
   maintenancegate_workplace: Workplace[] = new Array<Workplace>();
   maintenancegate_faultcategory: Fault[] = new Array<Fault>();
+  maintenancegate_duedate: Duedate[] = new Array<Duedate>();
 
   constructor() {
     this.article = new Article();
+  }
+}
+
+export class TicketCreateRequest {
+  title: string = '';
+  group: string = '';
+  article: TicketCreateArticleRequest;
+  customer: string = '';
+  owner_id: number = 0;
+  created_at: string = '';
+  maintenancegate_kanban_state: number = 1;
+  maintenancegate_downtime: Downtime[] = new Array<Downtime>();
+  maintenancegate_frequency: Frequency[] = new Array<Frequency>();
+  maintenancegate_priority: Priority[] = new Array<Priority>();
+  maintenancegate_restriction: Restriction[] = new Array<Restriction>();
+  maintenancegate_workplace: Workplace[] = new Array<Workplace>();
+  maintenancegate_faultcategory: Fault[] = new Array<Fault>();
+  maintenancegate_duedate: Duedate[] = new Array<Duedate>();
+
+  constructor() {
+    this.article = new TicketCreateArticleRequest();
   }
 }
 
@@ -88,6 +110,13 @@ export interface Workplace {
 export interface Fault {
   label: string;
   value: number;
+  date: string;
+}
+
+export interface Duedate {
+  label: string;
+  start: string;
+  end: string;
   date: string;
 }
 

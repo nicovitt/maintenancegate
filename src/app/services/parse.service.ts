@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Faultcategory } from '../classes/faultcategory';
 import { Kanban_Column } from '../classes/kanban';
 import { Workplacecategory } from '../classes/workplacecategory';
+import { UserService } from './user.service';
 
 const Parse = require('parse');
 
@@ -16,7 +17,7 @@ export class ParseService {
     return Parse;
   }
 
-  constructor() {
+  constructor(private userService: UserService) {
     Parse.initialize('maintenancegate_parse_server_1');
     Parse.serverURL = 'https://parse-1.zentrum-digitalisierung.de/parse';
   }
@@ -25,8 +26,7 @@ export class ParseService {
     const Mandant = this.instance.Object.extend('Mandant');
     const query = new this.instance.Query(Mandant);
 
-    // TODO: change the domain based on the logged-in user
-    query.equalTo('domain', 'braeuergmbh.de');
+    query.equalTo('domain', this.userService.domainname);
     const results = await query.find();
     for (let i = 0; i < results.length; i++) {
       this.faultCategories = results[i].get('faults');
@@ -38,8 +38,7 @@ export class ParseService {
     const Mandant = this.instance.Object.extend('Mandant');
     const query = new this.instance.Query(Mandant);
 
-    // TODO: change the domain based on the logged-in user
-    query.equalTo('domain', 'braeuergmbh.de');
+    query.equalTo('domain', this.userService.domainname);
     const results = await query.find();
     for (let i = 0; i < results.length; i++) {
       this.workplaceCategories = results[i].get('workplaces');
@@ -51,8 +50,7 @@ export class ParseService {
     const Mandant = this.instance.Object.extend('Mandant');
     const query = new this.instance.Query(Mandant);
 
-    // TODO: change the domain based on the logged-in user
-    query.equalTo('domain', 'braeuergmbh.de');
+    query.equalTo('domain', this.userService.domainname);
     const results = await query.find();
     for (let i = 0; i < results.length; i++) {
       this.kanbancolumns = results[i].get('kanban_columns');

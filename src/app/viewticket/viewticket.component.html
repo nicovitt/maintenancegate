@@ -3,53 +3,63 @@
   <button
     mat-stroked-button
     color="primary"
-    *ngIf="userpermissions.caneditticket"
+    *ngIf="userService.caneditticket"
     (click)="editTicket()"
   >
     Bearbeitungsmodus
   </button>
 </div>
 
-<!-- TODO: Ticketstatus -->
 <app-fancyprogressbar></app-fancyprogressbar>
 
 <ng-container *ngIf="!progressbar.getshowprogressbar()">
   <p>Ticket erstellt: {{ ticket.created_at | date: "dd.MM.yyyy HH:mm" }}</p>
   <p>Letztes Update: {{ ticket.updated_at | date: "dd.MM.yyyy HH:mm" }}</p>
+  <p *ngIf="ticket.maintenancegate_duedate.length > 0">
+    Fälligkeitsdatum:
+    {{
+      ticket.maintenancegate_duedate[ticket.maintenancegate_duedate.length - 1]
+        .start | date: "dd.MM.yyyy"
+    }}
+    -
+    {{
+      ticket.maintenancegate_duedate[ticket.maintenancegate_duedate.length - 1]
+        .end | date: "dd.MM.yyyy"
+    }}
+  </p>
 
   <div class="cardsinformation flex_container_row_spacebetween_start">
-    <!-- TODO: Störgrund -->
     <mat-card class="infocard">
       <mat-card-title>Störgrund</mat-card-title>
       <mat-card-content>
         <p>{{ ticket.maintenancegate_faultcategory.slice(-1)[0].value }}</p>
       </mat-card-content>
     </mat-card>
-    <!-- TODO: Arbeitsplatz -->
     <mat-card class="infocard">
       <mat-card-title>Arbeitsplatz</mat-card-title>
       <mat-card-content>
-        <p>{{ ticket.maintenancegate_workplace.slice(-1)[0].value }}</p>
+        <p *ngIf="workplacesareloaded">
+          {{
+            ticket.maintenancegate_workplace.slice(-1)[0].value
+              | formatLabelWorkplace: Workplacecategories
+          }}
+        </p>
       </mat-card-content>
     </mat-card>
-    <!-- TODO: Priorität -->
     <mat-card class="infocard">
       <mat-card-title>Priorität</mat-card-title>
       <mat-card-content>
         <p>{{ ticket.maintenancegate_priority.slice(-1)[0].value }}</p>
       </mat-card-content>
     </mat-card>
-    <!-- TODO: Fälligkeit -->
   </div>
-
-  <!-- TODO: Articles inkl. neuer Nachricht eingeben -->
 </ng-container>
 
 <mat-accordion>
   <mat-expansion-panel
     [expanded]="articlesstep === 0"
     (opened)="setArticlesStep(0)"
-    *ngIf="userpermissions.caneditticket"
+    *ngIf="userService.caneditticket"
     hideToggle
   >
     <mat-expansion-panel-header>
@@ -127,7 +137,7 @@
   <ng-container matColumnDef="value">
     <th mat-header-cell *matHeaderCellDef>Wert</th>
     <td mat-cell *matCellDef="let element">
-      <div *ngIf="isSliderValue(element); else tablevalueelseblock">
+      <div *ngIf="isDowntimeValue(element)">
         <mat-slider
           thumbLabel
           tickInterval="1"
@@ -140,15 +150,42 @@
         ></mat-slider>
         {{ element.value | formatLabelDowntimeLong }}
       </div>
-      <ng-template #tablevalueelseblock>
-        {{ element.value | formatLabelRestriction }}
-      </ng-template>
+      <div *ngIf="isFrequencyValue(element)">
+        <mat-slider
+          thumbLabel
+          tickInterval="1"
+          aria-labelledby="sliderFrequencyLabel"
+          min="0"
+          max="100"
+          step="25"
+          disabled
+          [ngModel]="element.value"
+        ></mat-slider>
+        {{ element.value | formatLabelFrequencyLong }}
+      </div>
+      <div *ngIf="isRestrictionValue(element)">
+        <span>{{ element.value | formatLabelRestriction }}</span>
+      </div>
+      <div *ngIf="isWorkplaceValue(element) && workplacesareloaded">
+        <span>{{
+          element.value | formatLabelWorkplace: Workplacecategories
+        }}</span>
+      </div>
     </td>
   </ng-container>
 
   <!-- Date Column -->
   <ng-container matColumnDef="date">
-    <th mat-header-cell *matHeaderCellDef>Datum</th>
+    <th
+      mat-header-cell
+      matSort
+      matSortActive="created"
+      matSortDisableClear
+      matSortDirection="desc"
+      *matHeaderCellDef
+    >
+      Datum
+    </th>
     <td mat-cell *matCellDef="let element">
       {{ element.date | date: "dd.MM.yyyy HH:mm" }}
     </td>

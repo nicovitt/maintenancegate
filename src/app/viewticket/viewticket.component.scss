@@ -23,13 +23,7 @@ table,
 }
 
 .infocard {
-  -webkit-order: 0;
-  -ms-flex-order: 0;
-  order: 0;
-  -webkit-flex: 25 1 auto;
-  -ms-flex: 25 1 auto;
-  flex: 25 1 auto;
-  -webkit-align-self: auto;
-  -ms-flex-item-align: auto;
-  align-self: auto;
+  -webkit-flex: 25% 0 0;
+  -ms-flex: 25% 0 0;
+  flex: 25% 0 0;
 }

@@ -8,8 +8,10 @@ import {
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AppComponent } from '../app.component';
+import { DialogService } from '../services/dialog.service';
 import { LocalstorageService } from '../services/localstorage.service';
 import { ProgressbarService } from '../services/progressbar.service';
+import { UserService } from '../services/user.service';
 import { ZammadService } from '../services/zammad.service';
 
 @Component({
@@ -22,50 +24,33 @@ export class AuthenticationComponent implements OnInit {
   password = '';
 
   constructor(
-    private zammadService: ZammadService,
-    private progressbarService: ProgressbarService,
-    private router: Router
+    private userService: UserService,
+    private router: Router,
+    private dialogService: DialogService
   ) {}
 
-  ngOnInit(): void {
-    // Check if already logged in then redirect
-    this.zammadService.checkSession().then(
-      (value) => {
+  ngOnInit(): void {}
+
+  login() {
+    this.userService
+      .login(this.username.trim(), this.password.trim())
+      .then((value) => {
         if (value) {
           this.router.navigate(['/dashboard']);
         } else {
-          console.log(value);
-        }
-      },
-      (rejected) => {
-        console.log(rejected);
-      }
-    );
-  }
-
-  login() {
-    this.progressbarService.toggleProgressBar();
-
-    // TODO: Show error message on error, Error-Handling
-
-    this.zammadService
-      .authorize(this.username, this.password)
-      .then(
-        (resolved) => {
-          console.log(resolved);
-          this.zammadService.getUser().subscribe((data) => {
-            console.log(data);
-            this.progressbarService.toggleProgressBar();
-            // Redirect to main view
-            this.router.navigate(['/dashboard']);
+          this.dialogService.presentError$({
+            header: '',
+            title: 'Login-Error',
+            message: 'Entschuldigung, wir konnten Sie nicht anmelden.',
           });
-        },
-        (rejected) => {
-          console.log(rejected);
         }
-      )
-      .catch((error) => {
-        console.log(error);
+      })
+      .catch(() => {
+        this.dialogService.presentError$({
+          header: '',
+          title: 'Login-Error',
+          message: 'Entschuldigung, wir konnten Sie nicht anmelden.',
+        });
       });
   }
 }

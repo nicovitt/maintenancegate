@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>Ticket beabreiten</h2>
 <mat-dialog-content>
-  <form [formGroup]="formGroup">
+  <form [formGroup]="dialogformGroup">
     <div class="flex_container_column_start_stretch">
       <!-- Kategorieauswahl -->
       <mat-form-field appearance="fill">
@@ -35,10 +35,10 @@
         </mat-autocomplete>
         <mat-error
           *ngIf="
-                  formGroup.get(['category'])!.hasError('required') &&
-                  (formGroup.get(['category'])!.dirty ||
-                    formGroup.get(['category'])!.touched)
-                "
+            dialogformGroup.get(['category'])!.hasError('required') &&
+            (dialogformGroup.get(['category'])!.dirty ||
+              dialogformGroup.get(['category'])!.touched)
+          "
         >
           Bitte wählen Sie einen Störgrund.</mat-error
         >
@@ -49,7 +49,9 @@
 
       <!-- Eine neue Kategorie eingeben, wenn _faultcategoryotherlabel ausgewählt wurde -->
       <mat-form-field
-        *ngIf="formGroup.get(['category'])!.value == _faultcategoryotherlabel"
+        *ngIf="
+          dialogformGroup.get(['category'])!.value == _faultcategoryotherlabel
+        "
       >
         <input
           matInput
@@ -74,28 +76,13 @@
         />
         <mat-error
           *ngIf="
-                  formGroup.get(['title'])!.hasError('required') &&
-                  (formGroup.get(['title'])!.dirty ||
-                    formGroup.get(['title'])!.touched)
-                "
+            dialogformGroup.get(['title'])!.hasError('required') &&
+            (dialogformGroup.get(['title'])!.dirty ||
+              dialogformGroup.get(['title'])!.touched)
+          "
           >Bitte geben Sie einen Titel an.</mat-error
         >
         <mat-hint>Kurzbeschreibung in wenigen Worten. </mat-hint>
-      </mat-form-field>
-
-      <mat-divider></mat-divider>
-
-      <!-- Eingabebereich für die Beschreibung des Tickets-->
-      <mat-form-field>
-        <mat-label id="labelMessage">Nachricht</mat-label>
-        <textarea
-          matInput
-          formControlName="message"
-          placeholder="{{ formGroup.get(['message'])!.value }}"
-          rows="4"
-          aria-labelledby="labelMessage"
-        ></textarea>
-        <mat-hint>(optional) Beschreibung des Fehlers. </mat-hint>
       </mat-form-field>
 
       <mat-divider></mat-divider>
@@ -127,10 +114,10 @@
         </mat-autocomplete>
         <mat-error
           *ngIf="
-                  formGroup.get(['workplace'])!.hasError('required') &&
-                  (formGroup.get(['workplace'])!.dirty ||
-                    formGroup.get(['workplace'])!.touched)
-                "
+            dialogformGroup.get(['workplace'])!.hasError('required') &&
+            (dialogformGroup.get(['workplace'])!.dirty ||
+              dialogformGroup.get(['workplace'])!.touched)
+          "
         >
           Bitte wählen Sie einen Arbeitsplatz.</mat-error
         >
@@ -138,7 +125,11 @@
       </mat-form-field>
 
       <!-- Eingabefeld für einen NEUEN Arbeitsplatz -->
-      <div *ngIf="formGroup.get(['workplace'])!.value == _workplaceotherlabel">
+      <div
+        *ngIf="
+          dialogformGroup.get(['workplace'])!.value == _workplaceotherlabel
+        "
+      >
         <mat-form-field>
           <mat-label id="labelWorkplaceName">Arbeitsplatz</mat-label>
           <input
@@ -167,12 +158,12 @@
 
     <!-- Stillstand -->
     <h3 id="sliderDowntimeLabel">Vermutete Dauer bis zur Störungsbehebung</h3>
-    <div class="flex_container_row_spacebetween_center">
+    <div class="flex_container_row_nowrap_spacebetween_center">
       <label class="sliderlabelstart">Minuten</label>
       <mat-slider
         thumbLabel
         tickInterval="1"
-        formControlName="worker_downtime"
+        formControlName="downtime"
         aria-labelledby="sliderDowntimeLabel"
         min="0"
         max="100"
@@ -184,12 +175,12 @@
     <!-- Häufigkeit -->
     <mat-divider></mat-divider>
     <h3 id="sliderFrequencyLabel">Häufigkeit des Problems</h3>
-    <div class="flex_container_row_spacebetween_center">
+    <div class="flex_container_row_nowrap_spacebetween_center">
       <label class="sliderlabelstart">Nie</label>
       <mat-slider
         thumbLabel
         tickInterval="1"
-        formControlName="worker_frequency"
+        formControlName="frequency"
         aria-labelledby="sliderFrequencyLabel"
         min="0"
         max="100"
@@ -204,7 +195,7 @@
     <mat-radio-group
       aria-labelledby="RadioGroupRestrictionLabel"
       class="radio-group flex_container_column_start_stretch"
-      formControlName="worker_restriction"
+      formControlName="restriction"
     >
       <mat-radio-button class="radio-button" id="no work" [value]="'3'">
         Ich kann nicht mehr arbeiten
@@ -238,8 +229,8 @@
   <!-- TODO: Einschränkung ändern -->
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Abbrechen</button>
-  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>
+  <button mat-button (click)="onCloseClick()">Abbrechen</button>
+  <button mat-button (click)="submitChanges()" cdkFocusInitial>
     Speichern
   </button>
 </mat-dialog-actions>
