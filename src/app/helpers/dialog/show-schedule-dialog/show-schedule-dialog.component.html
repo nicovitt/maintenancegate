@@ -1,0 +1,53 @@
+<h2 mat-dialog-title>Arbeitsplan "{{ data.title }}"</h2>
+<mat-dialog-content>
+  <table mat-table [dataSource]="data.steps" class="table-steps">
+    <ng-container matColumnDef="performer">
+      <th mat-header-cell *matHeaderCellDef>Mitarbeiter</th>
+      <td mat-cell *matCellDef="let element">{{ element.performer }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="position">
+      <th mat-header-cell *matHeaderCellDef>Position</th>
+      <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="topic">
+      <th mat-header-cell *matHeaderCellDef>Was</th>
+      <td mat-cell *matCellDef="let element">{{ element.topic }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="frequency">
+      <th mat-header-cell *matHeaderCellDef>Frequenz</th>
+      <td mat-cell *matCellDef="let element">{{ element.frequency }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="protectivegear">
+      <th mat-header-cell *matHeaderCellDef>PSA</th>
+      <td mat-cell *matCellDef="let element">{{ element.protectivegear }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>Typ</th>
+      <td mat-cell *matCellDef="let element">{{ element.type }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Beschreibung</th>
+      <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="usedmaterial">
+      <th mat-header-cell *matHeaderCellDef>Material</th>
+      <td mat-cell *matCellDef="let element">{{ element.usedmaterial }}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCloseClick()">Abbrechen</button>
+  <button mat-button (click)="submitChanges()" cdkFocusInitial>
+    Speichern
+  </button>
+</mat-dialog-actions>

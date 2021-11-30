@@ -9,6 +9,7 @@ import {
   ReverseArraylPipe,
   SafeHtmlPipe,
   WorkplaceIdToName,
+  WorkplaceTitleToName,
 } from './pipes/pipes';
 import { FancyprogressbarComponent } from './fancyprogressbar/fancyprogressbar.component';
 import { ConfirmationDialog, ErrorDialog } from '../services/dialog.service';
@@ -27,10 +28,18 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { GalleryModule } from 'ng-gallery';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 import { EditTicketDialogComponent } from './dialog/edit-ticket-dialog/edit-ticket-dialog.component';
+import { ShowScheduleDialogComponent } from './dialog/show-schedule-dialog/show-schedule-dialog.component';
+import { MatTableModule } from '@angular/material/table';
+import { CreateScheduleDialogComponent } from './dialog/create-schedule-dialog/create-schedule-dialog.component';
+import { CreateScheduleStepDialogComponent } from './dialog/create-schedule-step-dialog/create-schedule-step-dialog.component';
+import { DeleteScheduleDialogComponent } from './dialog/delete-schedule-dialog/delete-schedule-dialog.component';
+import { BackButtonDirective } from './backbutton/back-button.directive';
+import { PageheaderComponent } from './pageheader/pageheader.component';
 
 @NgModule({
   declarations: [
     SafeHtmlPipe,
+    WorkplaceTitleToName,
     WorkplaceIdToName,
     ReverseArraylPipe,
     FancyprogressbarComponent,
@@ -42,6 +51,12 @@ import { EditTicketDialogComponent } from './dialog/edit-ticket-dialog/edit-tick
     ConfirmationDialog,
     ErrorDialog,
     EditTicketDialogComponent,
+    ShowScheduleDialogComponent,
+    CreateScheduleDialogComponent,
+    CreateScheduleStepDialogComponent,
+    DeleteScheduleDialogComponent,
+    BackButtonDirective,
+    PageheaderComponent,
   ],
   imports: [
     CommonModule,
@@ -62,10 +77,12 @@ import { EditTicketDialogComponent } from './dialog/edit-ticket-dialog/edit-tick
     MatCardModule,
     MatAutocompleteModule,
     MatDatepickerModule,
+    MatTableModule,
     // END Angular Material
   ],
   exports: [
     SafeHtmlPipe,
+    WorkplaceTitleToName,
     WorkplaceIdToName,
     ReverseArraylPipe,
     FancyprogressbarComponent,
@@ -77,6 +94,8 @@ import { EditTicketDialogComponent } from './dialog/edit-ticket-dialog/edit-tick
     ConfirmationDialog,
     ErrorDialog,
     EditTicketDialogComponent,
+    BackButtonDirective,
+    PageheaderComponent,
   ],
 })
 export class HelpersModule {}

@@ -1,0 +1,84 @@
+<h2 mat-dialog-title>Schritt hinzufügen</h2>
+<mat-dialog-content>
+  <form [formGroup]="stepsForm">
+    <mat-form-field appearance="outline">
+      <mat-label>Mitarbeiter</mat-label>
+      <input matInput type="text" placeholder="" formControlName="performer" />
+      <mat-error *ngIf="stepsForm.get(['performer'])!.invalid"
+        >Bitte einen Mitarbeiter angeben</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Wo muss der Schritt ausgeführt werden?</mat-label>
+      <input matInput type="text" placeholder="" formControlName="position" />
+      <mat-error *ngIf="stepsForm.get(['position'])!.invalid"
+        >Wo muss der Schritt ausgeführt werden?</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Was muss gemacht werden?</mat-label>
+      <input matInput type="text" placeholder="" formControlName="topic" />
+      <mat-error *ngIf="stepsForm.get(['topic'])!.invalid"
+        >Wo muss der Schritt ausgeführt werden?</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Wie oft muss der Schritt gemacht werden?</mat-label>
+      <input matInput type="text" placeholder="" formControlName="frequency" />
+      <mat-error *ngIf="stepsForm.get(['frequency'])!.invalid"
+        >Wie oft muss der Schritt gemacht werden?</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Schutzausrüstung (PSA)</mat-label>
+      <input
+        matInput
+        type="text"
+        placeholder=""
+        formControlName="protectivegear"
+      />
+      <mat-error *ngIf="stepsForm.get(['protectivegear'])!.invalid"
+        >Welche Schutzausrüstung (PSA) wird benötigt?</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Typ</mat-label>
+      <input matInput type="text" placeholder="" formControlName="type" />
+      <mat-error *ngIf="stepsForm.get(['type'])!.invalid"
+        >Welche Aktion soll gemacht werden?</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Beschreibung</mat-label>
+      <textarea matInput formControlName="description"></textarea>
+      <mat-error *ngIf="stepsForm.get(['description'])!.invalid"
+        >Bitte beschreiben Sie den Schritt</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Material</mat-label>
+      <input
+        matInput
+        type="text"
+        placeholder=""
+        formControlName="usedmaterial"
+      />
+      <mat-error *ngIf="stepsForm.get(['usedmaterial'])!.invalid"
+        >Wird zusätzliches Werkzeug benötigt?</mat-error
+      >
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCloseClick()">Abbrechen</button>
+  <button mat-button (click)="submitChanges()" cdkFocusInitial>
+    Speichern
+  </button>
+</mat-dialog-actions>

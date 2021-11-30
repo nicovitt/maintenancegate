@@ -32,6 +32,7 @@ export class FancyprogressbarComponent implements OnInit {
               this.line.setText(
                 'Ticket befindet sich in: ' + this.kanbanstates[index].label
               );
+              // TODO: Here is a map error.
               this.line.animate(index + 1 / this.kanbanstates.length);
             }
           }

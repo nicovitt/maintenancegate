@@ -33,6 +33,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 // END Angular Material
 
 import { GalleryModule } from 'ng-gallery';
@@ -42,10 +43,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProgressbarComponent } from './helpers/progressbar/progressbar.component';
 import { TranslocoRootModule } from './transloco-root.module';
 import { HelpersModule } from './helpers/helpers.module';
-import { WorkplaceIdToName } from './helpers/pipes/pipes';
+import { WorkplaceIdToName, WorkplaceTitleToName } from './helpers/pipes/pipes';
 import { ImpressComponent } from './impress/impress.component';
 import { CanActivateOnAuthenticated } from './helpers/guards/can-activate-on-authenticated';
 import { User } from './classes/user';
+import { SchedulesComponent } from './schedules/schedules.component';
+import { ScheduleslistComponent } from './scheduleslist/scheduleslist.component';
+import { SchedulescreateeditComponent } from './schedulescreateedit/schedulescreateedit.component';
+
+// TODO: Collect all imports which originally recide in helpers folder and move to helpers module.
 
 @NgModule({
   declarations: [
@@ -56,6 +62,9 @@ import { User } from './classes/user';
     ProgressbarComponent,
     ViewticketComponent,
     ImpressComponent,
+    SchedulesComponent,
+    ScheduleslistComponent,
+    SchedulescreateeditComponent,
   ],
   imports: [
     BrowserModule,
@@ -81,6 +90,7 @@ import { User } from './classes/user';
     MatTableModule,
     MatExpansionModule,
     MatSnackBarModule,
+    MatTooltipModule,
     // END Angular Material
 
     GalleryModule,
@@ -98,6 +108,7 @@ import { User } from './classes/user';
   providers: [
     CookieService,
     DatePipe,
+    WorkplaceTitleToName,
     WorkplaceIdToName,
     CanActivateOnAuthenticated,
     User,

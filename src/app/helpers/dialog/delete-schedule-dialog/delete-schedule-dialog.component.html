@@ -1,0 +1,8 @@
+<h2 mat-dialog-title>Arbeitsplan "{{ data.title }}"</h2>
+<mat-dialog-content>
+  <p>Möchten Sie den Wartungsplan wirklich löschen?</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCloseClick()">Abbrechen</button>
+  <button mat-button (click)="submitChanges()" cdkFocusInitial>Löschen</button>
+</mat-dialog-actions>

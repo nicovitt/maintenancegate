@@ -7,6 +7,11 @@ import {
 import { Ticket } from '../classes/ticket';
 import 'moment/locale/de';
 import { EditTicketDialogComponent } from '../helpers/dialog/edit-ticket-dialog/edit-ticket-dialog.component';
+import { Schedules } from '../classes/schedules';
+import { ShowScheduleDialogComponent } from '../helpers/dialog/show-schedule-dialog/show-schedule-dialog.component';
+import { CreateScheduleStepDialogComponent } from '../helpers/dialog/create-schedule-step-dialog/create-schedule-step-dialog.component';
+import { CreateScheduleDialogComponent } from '../helpers/dialog/create-schedule-dialog/create-schedule-dialog.component';
+import { DeleteScheduleDialogComponent } from '../helpers/dialog/delete-schedule-dialog/delete-schedule-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -72,6 +77,44 @@ export class DialogService {
     const dialogRef = this.dialog.open(EditTicketDialogComponent, {
       width: '90%',
       data: ticket,
+      hasBackdrop: true,
+      disableClose: true,
+    });
+    return dialogRef;
+  }
+
+  showSchedule(schedule: Schedules) {
+    const dialogRef = this.dialog.open(ShowScheduleDialogComponent, {
+      width: '90%',
+      data: schedule,
+      hasBackdrop: true,
+      disableClose: true,
+    });
+    return dialogRef;
+  }
+
+  addSchedule() {
+    const dialogRef = this.dialog.open(CreateScheduleDialogComponent, {
+      width: '90%',
+      hasBackdrop: true,
+      disableClose: true,
+    });
+    return dialogRef;
+  }
+
+  deleteSchedule(schedule: Schedules) {
+    const dialogRef = this.dialog.open(DeleteScheduleDialogComponent, {
+      width: '90%',
+      data: schedule,
+      hasBackdrop: true,
+      disableClose: true,
+    });
+    return dialogRef;
+  }
+
+  addStep() {
+    const dialogRef = this.dialog.open(CreateScheduleStepDialogComponent, {
+      width: '90%',
       hasBackdrop: true,
       disableClose: true,
     });

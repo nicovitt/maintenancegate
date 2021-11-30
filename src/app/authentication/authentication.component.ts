@@ -29,7 +29,12 @@ export class AuthenticationComponent implements OnInit {
     private dialogService: DialogService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Check if user is already marked as logged in.
+    this.userService.isLoggedIn.subscribe((loggedin) => {
+      loggedin ? this.router.navigate(['/dashboard']) : null;
+    });
+  }
 
   login() {
     this.userService
@@ -49,7 +54,7 @@ export class AuthenticationComponent implements OnInit {
         this.dialogService.presentError$({
           header: '',
           title: 'Login-Error',
-          message: 'Entschuldigung, wir konnten Sie nicht anmelden.',
+          message: 'Entschuldigung, es ist ein Fehler aufgetreten.',
         });
       });
   }

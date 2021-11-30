@@ -10,12 +10,24 @@ export class SafeHtmlPipe implements PipeTransform {
   }
 }
 
+@Pipe({ name: 'workplacetitletoname' })
+export class WorkplaceTitleToName implements PipeTransform {
+  constructor() {}
+  transform(value: number, workplaces: Workplacecategory[]) {
+    return workplaces.find((workplace) => {
+      return workplace.title == value + ''
+        ? workplace.title + ' ' + workplace.description
+        : '';
+    });
+  }
+}
+
 @Pipe({ name: 'workplaceidtoname' })
 export class WorkplaceIdToName implements PipeTransform {
   constructor() {}
   transform(value: number, workplaces: Workplacecategory[]) {
     return workplaces.find((workplace) => {
-      return workplace.title == value + ''
+      return workplace.id == value
         ? workplace.title + ' ' + workplace.description
         : '';
     });
@@ -131,6 +143,10 @@ export class FormatLabelWorkplacePipe {
     let workplace = Workplacecategories.find((workplace) => {
       return workplace.title == value.toString();
     });
-    return workplace.title + ' ' + workplace.description;
+    if (workplace) {
+      return workplace.title + ' ' + workplace.description;
+    } else {
+      return value;
+    }
   }
 }

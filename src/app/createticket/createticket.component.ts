@@ -17,7 +17,7 @@ import { User } from '../classes/user';
 import { ImageService } from '../services/image.service';
 import { HttpResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { WorkplaceIdToName } from '../helpers/pipes/pipes';
+import { WorkplaceTitleToName } from '../helpers/pipes/pipes';
 
 @Component({
   selector: 'app-createticket',
@@ -61,7 +61,7 @@ export class CreateticketComponent implements OnInit {
     private zammadService: ZammadService,
     private imageService: ImageService,
     private router: Router,
-    private pipe_workplaceidtoname: WorkplaceIdToName
+    private pipe_workplacetitletoname: WorkplaceTitleToName
   ) {}
 
   async ngOnInit() {
@@ -259,7 +259,7 @@ export class CreateticketComponent implements OnInit {
   private _filterWorkplace(value: number): Workplacecategory[] {
     if (!value) return this.Workplacecategories;
 
-    let workplace: Workplacecategory = this.pipe_workplaceidtoname.transform(
+    let workplace: Workplacecategory = this.pipe_workplacetitletoname.transform(
       value,
       this.Workplacecategories
     );

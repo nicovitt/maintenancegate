@@ -5,7 +5,7 @@
         class="sidenav-entry menu-toolbar-with-icon"
         routerLink="/login"
         (click)="sidenav.toggle()"
-        *ngIf="!this.userService.isLoggedIn"
+        *ngIf="!(this.userService.isLoggedIn | async)"
       >
         <mat-icon aria-hidden="false" aria-label="Login icon">login</mat-icon>
         <span>Login</span>
@@ -15,7 +15,7 @@
         class="sidenav-entry menu-toolbar-with-icon"
         routerLink="/"
         (click)="sidenav.toggle()"
-        *ngIf="this.userService.isLoggedIn"
+        *ngIf="this.userService.isLoggedIn | async"
       >
         <mat-icon aria-hidden="false" aria-label="Ticketüberischt icon"
           >confirmation_number</mat-icon
@@ -27,7 +27,7 @@
         class="sidenav-entry menu-toolbar-with-icon"
         routerLink="/monitor"
         (click)="sidenav.toggle()"
-        *ngIf="this.userService.isLoggedIn"
+        *ngIf="this.userService.isLoggedIn | async"
       >
         <mat-icon aria-hidden="false" aria-label="Monitor icon">dvr</mat-icon>
         <span>Monitor</span>
@@ -35,9 +35,21 @@
 
       <mat-toolbar-row
         class="menu-toolbar-with-icon sidenav-entry"
+        routerLink="/schedules"
+        (click)="sidenav.toggle()"
+        *ngIf="this.userService.isLoggedIn | async"
+      >
+        <mat-icon aria-hidden="false" aria-label="Geplante Wartungen icon"
+          >task</mat-icon
+        >
+        <span>Wartungsarbeiten</span>
+      </mat-toolbar-row>
+
+      <mat-toolbar-row
+        class="menu-toolbar-with-icon sidenav-entry"
         routerLink="/reports"
         (click)="sidenav.toggle()"
-        *ngIf="this.userService.isLoggedIn"
+        *ngIf="this.userService.isLoggedIn | async"
       >
         <mat-icon aria-hidden="false" aria-label="Berichte icon"
           >summarize</mat-icon
@@ -48,14 +60,14 @@
       <mat-toolbar-row
         class="sidenav-entry menu-toolbar-with-icon"
         (click)="logout()"
-        *ngIf="this.userService.isLoggedIn"
+        *ngIf="this.userService.isLoggedIn | async"
       >
         <mat-icon aria-hidden="false" aria-label="Logout icon">logout</mat-icon>
         <span>Abmelden</span>
       </mat-toolbar-row>
     </mat-toolbar>
 
-    <mat-toolbar color="primary" *ngIf="this.userService.isLoggedIn">
+    <mat-toolbar color="primary" *ngIf="this.userService.isLoggedIn | async">
       <mat-toolbar-row
         class="sidenav-entry menu-toolbar-with-icon"
         routerLink="/newticket"
@@ -68,7 +80,7 @@
       </mat-toolbar-row>
     </mat-toolbar>
     <div class="toolbar-footer flex_container_column_start_stretch">
-      <span *ngIf="this.userService.isLoggedIn"
+      <span *ngIf="this.userService.isLoggedIn | async"
         >Hallo {{ userService.username }}</span
       >
       <span

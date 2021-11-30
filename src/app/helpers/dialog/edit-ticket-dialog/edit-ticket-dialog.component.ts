@@ -26,7 +26,7 @@ import { Ticket } from 'src/app/classes/ticket';
 import { Workplacecategory } from 'src/app/classes/workplacecategory';
 import { ParseService } from 'src/app/services/parse.service';
 import { TicketService } from 'src/app/services/ticket.service';
-import { WorkplaceIdToName } from '../../pipes/pipes';
+import { WorkplaceTitleToName } from '../../pipes/pipes';
 
 @Component({
   selector: 'app-edit-ticket-dialog',
@@ -74,11 +74,12 @@ export class EditTicketDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Ticket,
     private _formBuilder: FormBuilder,
     private parseService: ParseService,
-    private pipe_workplaceidtoname: WorkplaceIdToName,
+    private pipe_workplacetitletoname: WorkplaceTitleToName,
     private ticketService: TicketService
   ) {}
 
   ngOnInit() {
+    console.log(this.data);
     this.dialogformGroup = this._formBuilder.group({
       title: [this.data.title, Validators.required],
       category: [
@@ -116,18 +117,22 @@ export class EditTicketDialogComponent implements OnInit {
         Validators.required,
       ],
       start: [
-        new Date(
-          this.data.maintenancegate_duedate[
-            this.data.maintenancegate_duedate.length - 1
-          ].start
-        ),
+        this.data.maintenancegate_duedate.length > 0
+          ? new Date(
+              this.data.maintenancegate_duedate[
+                this.data.maintenancegate_duedate.length - 1
+              ].start
+            )
+          : '',
       ],
       end: [
-        new Date(
-          this.data.maintenancegate_duedate[
-            this.data.maintenancegate_duedate.length - 1
-          ].end
-        ),
+        this.data.maintenancegate_duedate.length > 0
+          ? new Date(
+              this.data.maintenancegate_duedate[
+                this.data.maintenancegate_duedate.length - 1
+              ].end
+            )
+          : '',
       ],
     });
 
@@ -258,7 +263,7 @@ export class EditTicketDialogComponent implements OnInit {
   private _filterWorkplace(value: number): Workplacecategory[] {
     if (!value) return this.Workplacecategories;
 
-    let workplace: Workplacecategory = this.pipe_workplaceidtoname.transform(
+    let workplace: Workplacecategory = this.pipe_workplacetitletoname.transform(
       value,
       this.Workplacecategories
     );

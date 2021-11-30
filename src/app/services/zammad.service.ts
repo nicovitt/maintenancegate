@@ -8,9 +8,6 @@ import { environment } from '../../environments/environment';
 import { PlainArticlePost } from '../classes/article';
 import { User } from '../classes/user';
 
-/**
- * TODO: Create an interceptor to handle authentication.
- */
 @Injectable({
   providedIn: 'root',
 })
@@ -47,7 +44,6 @@ export class ZammadService {
 
   logout() {
     // TODO: Remove the token in zammad aswell.
-
     // Remove token from local storage
     this.lss.removeitem(environment.sessiontokenname);
     this.lss.removeitem(environment.sessionuserlabel);
@@ -60,10 +56,11 @@ export class ZammadService {
           (value: HttpResponse<any>) => {
             if (value.status == 200) {
               resolve(true);
+            } else {
+              // The endpoint can not be reached (perhaps unauthorized). Remove the sessiontoken from local storage.
+              this.logout();
+              resolve(false);
             }
-            // The endpoint can not be reached (perhaps unauthorized). Remove the sessiontoken from local storage.
-            this.logout();
-            resolve(false);
           },
           () => {
             // The endpoint can not be reached (perhaps unauthorized). Remove the sessiontoken from local storage.
@@ -99,7 +96,7 @@ export class ZammadService {
           if (data['tokens'].length > 0) {
             data['tokens'].forEach((token: any) => {
               if (token['label'] === environment.sessiontokenlabel) {
-                this.lss.removeitem(environment.sessiontokenname);
+                // this.lss.removeitem(environment.sessiontokenname);
                 this.http
                   .delete(
                     'https://zammad-1.zentrum-digitalisierung.de/api/v1/user_access_token/' +
@@ -113,10 +110,12 @@ export class ZammadService {
                   )
                   .subscribe(
                     (value) => {
-                      console.log('Delete token success.');
+                      console.log('Token in Zammad successfully deleted.');
                     },
                     (error) => {
-                      console.log('Delete token error.');
+                      console.log(
+                        'There was an error while deleting the token in Zammad.'
+                      );
                     }
                   );
               }
