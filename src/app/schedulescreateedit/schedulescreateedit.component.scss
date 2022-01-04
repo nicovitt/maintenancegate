@@ -1,6 +1,11 @@
-.table-steps {
+.table-steps,
+.table-files {
   width: 100%;
   margin-top: 50px;
+}
+
+.firstelementintable {
+  margin-right: 40px;
 }
 
 .emptydataintable {
@@ -19,4 +24,33 @@
   width: 100%;
   margin-top: 30px;
   margin-bottom: 30px;
+}
+
+.gallery {
+  margin-top: 50px;
+  > button {
+    margin-bottom: 20px;
+  }
+}
+
+.form-section {
+  margin-top: 25px;
+}
+
+.calendarcontainer {
+  min-width: 300px;
+}
+
+.datedisplay {
+  text-align: center;
+}
+
+.seriesformcard {
+  margin: 20px;
+  .mat-checkbox {
+    margin-right: 20px;
+  }
+  .mat-checkbox:last-child {
+    margin-right: 0px;
+  }
 }

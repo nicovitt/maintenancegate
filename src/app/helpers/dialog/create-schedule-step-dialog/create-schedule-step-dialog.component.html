@@ -2,34 +2,10 @@
 <mat-dialog-content>
   <form [formGroup]="stepsForm">
     <mat-form-field appearance="outline">
-      <mat-label>Mitarbeiter</mat-label>
-      <input matInput type="text" placeholder="" formControlName="performer" />
-      <mat-error *ngIf="stepsForm.get(['performer'])!.invalid"
-        >Bitte einen Mitarbeiter angeben</mat-error
-      >
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
       <mat-label>Wo muss der Schritt ausgeführt werden?</mat-label>
       <input matInput type="text" placeholder="" formControlName="position" />
       <mat-error *ngIf="stepsForm.get(['position'])!.invalid"
         >Wo muss der Schritt ausgeführt werden?</mat-error
-      >
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Was muss gemacht werden?</mat-label>
-      <input matInput type="text" placeholder="" formControlName="topic" />
-      <mat-error *ngIf="stepsForm.get(['topic'])!.invalid"
-        >Wo muss der Schritt ausgeführt werden?</mat-error
-      >
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Wie oft muss der Schritt gemacht werden?</mat-label>
-      <input matInput type="text" placeholder="" formControlName="frequency" />
-      <mat-error *ngIf="stepsForm.get(['frequency'])!.invalid"
-        >Wie oft muss der Schritt gemacht werden?</mat-error
       >
     </mat-form-field>
 
@@ -47,8 +23,16 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Typ</mat-label>
-      <input matInput type="text" placeholder="" formControlName="type" />
+      <mat-label>Aktion</mat-label>
+      <mat-select formControlName="type">
+        <mat-select-trigger>
+          {{ stepsForm.get("type").value ? stepsForm.get("type").value : "" }}
+        </mat-select-trigger>
+        <mat-option *ngFor="let type of typeselectList" [value]="type.name">
+          <mat-icon>{{ type.icon }}</mat-icon
+          >{{ type.name }}</mat-option
+        >
+      </mat-select>
       <mat-error *ngIf="stepsForm.get(['type'])!.invalid"
         >Welche Aktion soll gemacht werden?</mat-error
       >

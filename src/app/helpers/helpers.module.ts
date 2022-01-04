@@ -35,6 +35,8 @@ import { CreateScheduleStepDialogComponent } from './dialog/create-schedule-step
 import { DeleteScheduleDialogComponent } from './dialog/delete-schedule-dialog/delete-schedule-dialog.component';
 import { BackButtonDirective } from './backbutton/back-button.directive';
 import { PageheaderComponent } from './pageheader/pageheader.component';
+import { DeleteGenericDialogComponent } from './dialog/delete-generic-dialog/delete-generic-dialog.component';
+import { ExecuteScheduleDialogComponent } from './dialog/execute-schedule-dialog/execute-schedule-dialog.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +59,8 @@ import { PageheaderComponent } from './pageheader/pageheader.component';
     DeleteScheduleDialogComponent,
     BackButtonDirective,
     PageheaderComponent,
+    DeleteGenericDialogComponent,
+    ExecuteScheduleDialogComponent,
   ],
   imports: [
     CommonModule,

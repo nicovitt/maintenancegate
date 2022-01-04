@@ -3,4 +3,5 @@ export class Permissions {
   // If not they should be looked up there.
   $gotpermissionsfrombackend: boolean = false;
   caneditticket: boolean = false;
+  caneditschedule: boolean = false;
 }

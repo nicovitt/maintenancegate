@@ -1,0 +1,10 @@
+<h2 mat-dialog-title>Wirklich löschen?</h2>
+<mat-dialog-content>
+  <p>Möchten Sie das Objekt wirklich löschen?</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCloseClick()">Abbrechen</button>
+  <button mat-button (click)="submitChanges()" cdkFocusInitial color="warn">
+    Löschen
+  </button>
+</mat-dialog-actions>

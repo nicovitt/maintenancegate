@@ -134,7 +134,7 @@ export class CreateticketComponent implements OnInit {
     reader.readAsDataURL(element.files[0]);
     reader.onloadend = () => {
       const base64String = <string>reader.result;
-      let type = this.imageService.calculateFileEnding(
+      let type = this.imageService.calculateFileEndingFromMimeType(
         this.imageService.calculateBase64MimeType(base64String)
       );
       let filebasename = Math.floor(Math.random() * 1000000 + 1);
@@ -146,6 +146,7 @@ export class CreateticketComponent implements OnInit {
       const base64string = 'base64,';
       let result = <string>reader.result;
       this.ticket.article.attachments.push({
+        id: 0,
         filename: filebasename + '.' + type,
         data: result.substring(
           result.indexOf(base64string) + base64string.length,

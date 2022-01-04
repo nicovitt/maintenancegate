@@ -7,6 +7,7 @@ import { ImpressComponent } from './impress/impress.component';
 import { ListticketComponent } from './listticket/listticket.component';
 import { SchedulesComponent } from './schedules/schedules.component';
 import { SchedulescreateeditComponent } from './schedulescreateedit/schedulescreateedit.component';
+import { SchedulesexecuteComponent } from './schedulesexecute/schedulesexecute.component';
 import { ScheduleslistComponent } from './scheduleslist/scheduleslist.component';
 import { ViewticketComponent } from './viewticket/viewticket.component';
 
@@ -41,6 +42,11 @@ const routes: Routes = [
   {
     path: 'schedules/create/:id',
     component: SchedulescreateeditComponent,
+    canActivate: [CanActivateOnAuthenticated],
+  },
+  {
+    path: 'schedules/execute/:id',
+    component: SchedulesexecuteComponent,
     canActivate: [CanActivateOnAuthenticated],
   },
   { path: 'impress', component: ImpressComponent },

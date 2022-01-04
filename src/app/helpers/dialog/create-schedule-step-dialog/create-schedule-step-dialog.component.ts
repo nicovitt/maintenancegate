@@ -10,6 +10,13 @@ import { Step } from 'src/app/classes/schedules';
 })
 export class CreateScheduleStepDialogComponent implements OnInit {
   public stepsForm: FormGroup;
+  public typeselectList: any[] = [
+    { name: 'Aktion', icon: 'construction' },
+    { name: 'Visuell', icon: 'visibility' },
+    { name: 'Auffüllen', icon: 'format_color_fill' },
+    { name: 'Entlüften/Leeren', icon: 'air' },
+    { name: 'Austausch', icon: 'sync_alt' },
+  ];
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -20,8 +27,6 @@ export class CreateScheduleStepDialogComponent implements OnInit {
     this.stepsForm = this._formBuilder.group({
       performer: ['', Validators.required],
       position: ['', Validators.required],
-      topic: ['', Validators.required],
-      frequency: ['', Validators.required],
       protectivegear: ['', Validators.required],
       type: ['', Validators.required],
       description: ['', Validators.required],
@@ -31,10 +36,7 @@ export class CreateScheduleStepDialogComponent implements OnInit {
 
   submitChanges() {
     let step = new Step();
-    step.performer = this.stepsForm.get('performer').value;
     step.position = this.stepsForm.get('position').value;
-    step.topic = this.stepsForm.get('topic').value;
-    step.frequency = this.stepsForm.get('frequency').value;
     step.protectivegear = this.stepsForm.get('protectivegear').value;
     step.type = this.stepsForm.get('type').value;
     step.description = this.stepsForm.get('description').value;

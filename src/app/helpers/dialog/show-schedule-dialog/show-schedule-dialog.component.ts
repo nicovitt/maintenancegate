@@ -9,10 +9,7 @@ import { Schedules } from 'src/app/classes/schedules';
 })
 export class ShowScheduleDialogComponent implements OnInit {
   displayedColumns: string[] = [
-    'performer',
     'position',
-    'topic',
-    'frequency',
     'protectivegear',
     'type',
     'description',

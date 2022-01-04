@@ -10,7 +10,7 @@ export const environment = {
   isloggedinname: 'isloggedin',
   usernamename: 'username',
   domainnamename: 'domainname',
-  version: '2.1.4',
+  version: '2.1.7',
 };
 
 /*

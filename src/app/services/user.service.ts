@@ -49,6 +49,9 @@ export class UserService {
           if (x.role_ids.includes(4)) {
             this.permissions.caneditticket = true;
           }
+          if (x.role_ids.includes(5)) {
+            this.permissions.caneditschedule = true;
+          }
           this.username = x.firstname + ' ' + x.lastname;
           this.domainname = x.maintenancegate_parse_domainname;
           this.permissions.$gotpermissionsfrombackend = true;
@@ -129,5 +132,13 @@ export class UserService {
 
   set caneditticket(value: boolean) {
     this.permissions.caneditticket = value;
+  }
+
+  get caneditschedule() {
+    return this.permissions.caneditschedule;
+  }
+
+  set caneditschedule(value: boolean) {
+    this.permissions.caneditschedule = value;
   }
 }

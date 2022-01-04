@@ -34,6 +34,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 // END Angular Material
 
 import { GalleryModule } from 'ng-gallery';
@@ -50,6 +53,7 @@ import { User } from './classes/user';
 import { SchedulesComponent } from './schedules/schedules.component';
 import { ScheduleslistComponent } from './scheduleslist/scheduleslist.component';
 import { SchedulescreateeditComponent } from './schedulescreateedit/schedulescreateedit.component';
+import { SchedulesexecuteComponent } from './schedulesexecute/schedulesexecute.component';
 
 // TODO: Collect all imports which originally recide in helpers folder and move to helpers module.
 
@@ -65,6 +69,7 @@ import { SchedulescreateeditComponent } from './schedulescreateedit/schedulescre
     SchedulesComponent,
     ScheduleslistComponent,
     SchedulescreateeditComponent,
+    SchedulesexecuteComponent,
   ],
   imports: [
     BrowserModule,
@@ -91,6 +96,9 @@ import { SchedulescreateeditComponent } from './schedulescreateedit/schedulescre
     MatExpansionModule,
     MatSnackBarModule,
     MatTooltipModule,
+    MatCheckboxModule,
+    MatSlideToggleModule,
+    MatDatepickerModule,
     // END Angular Material
 
     GalleryModule,

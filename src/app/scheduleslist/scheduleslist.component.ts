@@ -65,16 +65,38 @@ export class ScheduleslistComponent implements OnInit {
   }
 
   addPlan(workplaceid: number) {
+    if (!this.userService.caneditschedule) {
+      return;
+    }
     this.scheduleService.schedule = new Schedules();
     this.router.navigate(['/schedules/create', workplaceid]);
   }
 
   editPlan(schedule: Schedules) {
+    if (!this.userService.caneditschedule) {
+      return;
+    }
     this.scheduleService.schedule = schedule;
     this.router.navigate(['/schedules/create', schedule.workplaceid]);
   }
 
+  executePlan(schedule: Schedules) {
+    this.dialogService
+      .executeSchedule(schedule)
+      .afterClosed()
+      .subscribe((value) => {
+        if (!value) {
+          return;
+        }
+        this.scheduleService.schedule = schedule;
+        this.router.navigate(['schedules/execute', schedule.workplaceid]);
+      });
+  }
+
   deletePlan(scheduletodelete: Schedules) {
+    if (!this.userService.caneditschedule) {
+      return;
+    }
     this.dialogService
       .deleteSchedule(scheduletodelete)
       .afterClosed()
@@ -84,15 +106,22 @@ export class ScheduleslistComponent implements OnInit {
             .deleteSchedule(scheduletodelete)
             .then(
               (fullfilled: Schedules) => {
-                console.log(fullfilled);
-                this.scheduledplans.splice(
-                  this.scheduledplans.findIndex((value) => {
-                    value == scheduletodelete;
-                  }),
-                  1
-                );
+                if (fullfilled) {
+                  this.scheduledplans.splice(
+                    this.scheduledplans.findIndex((value) => {
+                      value == scheduletodelete;
+                    }),
+                    1
+                  );
 
-                this.table.renderRows();
+                  this.table.renderRows();
+                } else {
+                  this.snackbar.opensnackbar(
+                    'Der Wartungsplan konnte nicht gelöscht werden.',
+                    'OK',
+                    10000
+                  );
+                }
               },
               () => {
                 this.snackbar.opensnackbar(

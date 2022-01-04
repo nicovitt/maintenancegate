@@ -24,7 +24,6 @@ export class CanActivateOnAuthenticated implements CanActivate {
     | UrlTree {
     return this.userService.isLoggedIn.pipe(
       map((loggedin) => {
-        console.log("canactivate: " +loggedin);
         if (!loggedin) {
           this.router.navigate(['/login'], {
             queryParams: {

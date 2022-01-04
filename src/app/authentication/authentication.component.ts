@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { AppComponent } from '../app.component';
 import { DialogService } from '../services/dialog.service';
 import { LocalstorageService } from '../services/localstorage.service';
+import { ParseService } from '../services/parse.service';
 import { ProgressbarService } from '../services/progressbar.service';
 import { UserService } from '../services/user.service';
 import { ZammadService } from '../services/zammad.service';
@@ -26,7 +27,8 @@ export class AuthenticationComponent implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private parseService: ParseService
   ) {}
 
   ngOnInit(): void {
@@ -37,10 +39,20 @@ export class AuthenticationComponent implements OnInit {
   }
 
   login() {
-    this.userService
-      .login(this.username.trim(), this.password.trim())
+    const promisebackend = this.userService.login(
+      this.username.trim(),
+      this.password.trim()
+    );
+
+    const promiseparse = this.parseService.login(
+      this.username.trim(),
+      this.password.trim()
+    );
+
+    // Log into backend and parse
+    Promise.all([promisebackend, promiseparse])
       .then((value) => {
-        if (value) {
+        if (value[0] && value[1]) {
           this.router.navigate(['/dashboard']);
         } else {
           this.dialogService.presentError$({
@@ -50,7 +62,7 @@ export class AuthenticationComponent implements OnInit {
           });
         }
       })
-      .catch(() => {
+      .catch((error) => {
         this.dialogService.presentError$({
           header: '',
           title: 'Login-Error',

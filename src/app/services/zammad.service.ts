@@ -7,6 +7,7 @@ import { LocalstorageService } from './localstorage.service';
 import { environment } from '../../environments/environment';
 import { PlainArticlePost } from '../classes/article';
 import { User } from '../classes/user';
+import { Group } from '../classes/group';
 
 @Injectable({
   providedIn: 'root',
@@ -283,6 +284,13 @@ export class ZammadService {
         headers: this._createHeadersWithTokenAuthorization(),
         observe: 'response',
       }
+    );
+  }
+
+  listGroups() {
+    return this.http.get<Array<Group>>(
+      'https://zammad-1.zentrum-digitalisierung.de/api/v1/groups',
+      { headers: this._createHeadersWithTokenAuthorization() }
     );
   }
 

@@ -23,34 +23,98 @@
       <mat-hint>Titel des Wartungsplans</mat-hint>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" type="text">
+    <mat-form-field appearance="outline" type="text" class="form-section">
       <mat-label>Beschreibung</mat-label>
       <input matInput placeholder="" formControlName="description" />
       <mat-hint>Beschreibung des Wartungsplans</mat-hint>
     </mat-form-field>
+
+    <mat-form-field appearance="outline" type="text" class="form-section">
+      <mat-label>Ausführende Stelle</mat-label>
+      <input matInput placeholder="" formControlName="performer" />
+      <mat-hint>Von wem soll der Plan bearbeitet werden?</mat-hint>
+    </mat-form-field>
+
+    <section class="form-section">
+      <!-- <h3>Plan als Serie speichern?</h3> -->
+      <mat-slide-toggle
+        formControlName="series_enabled"
+        (change)="resetseries()"
+        >{{
+          schedulemetadataForm.get("series_enabled").value
+            ? "Wird als Serie speichert."
+            : "Wird nicht als Serie gespeichert."
+        }}</mat-slide-toggle
+      >
+    </section>
+    <mat-card
+      class="seriesformcard"
+      *ngIf="schedulemetadataForm.get('series_enabled').value"
+    >
+      <mat-card-content class="seriesformcardcontent">
+        <section class="form-section">
+          <mat-radio-group
+            aria-labelledby="Frequenz radio-button"
+            formControlName="series_frequency"
+            class="flex_container_row_nowrap_spacebetween_center"
+          >
+            <mat-radio-button value="'daily'">Täglich</mat-radio-button>
+            <mat-radio-button value="'weekly'">Wöchentlich</mat-radio-button>
+            <mat-radio-button value="'monthly'">Monatlich</mat-radio-button>
+            <mat-radio-button value="'yearly'">Jährlich</mat-radio-button>
+          </mat-radio-group>
+        </section>
+
+        <section
+          class="form-section flex_container_row_nowrap_spacebetween_center"
+        >
+          <mat-checkbox formControlName="monday">Montag</mat-checkbox>
+          <mat-checkbox formControlName="tuesday">Dienstag</mat-checkbox>
+          <mat-checkbox formControlName="wednesday">Mittwoch</mat-checkbox>
+          <mat-checkbox formControlName="thursday">Donnerstag</mat-checkbox>
+          <mat-checkbox formControlName="friday">Freitag</mat-checkbox>
+          <mat-checkbox formControlName="saturday">Samstag</mat-checkbox>
+          <mat-checkbox formControlName="sunday">Sonntag</mat-checkbox>
+        </section>
+
+        <section class="form-section flex_container_row_spacearound_center">
+          <div class="calendarcontainer flex_container_column_start_stretch">
+            <mat-calendar
+              [selected]="schedulemetadataForm.get('startdate').value"
+              (selectedChange)="updateFormDate($event, 'startdate')"
+            ></mat-calendar>
+            <span class="datedisplay"
+              >Startdatum:
+              {{
+                schedulemetadataForm.get("startdate").value | date: "dd.MM.yyyy"
+              }}</span
+            >
+          </div>
+          <div class="calendarcontainer flex_container_column_start_stretch">
+            <mat-calendar
+              [selected]="schedulemetadataForm.get('enddate').value"
+              [minDate]="schedulemetadataForm.get('startdate').value"
+              (selectedChange)="updateFormDate($event, 'enddate')"
+            ></mat-calendar>
+            <span class="datedisplay"
+              >Enddatum:
+              {{
+                schedulemetadataForm.get("enddate").value | date: "dd.MM.yyyy"
+              }}</span
+            >
+          </div>
+        </section>
+      </mat-card-content>
+    </mat-card>
   </form>
 </div>
 
 <button mat-stroked-button (click)="addstep()">Schritt hinzufügen</button>
-<table mat-table [dataSource]="schedule.steps" class="table-steps">
-  <ng-container matColumnDef="performer">
-    <th mat-header-cell *matHeaderCellDef>Mitarbeiter</th>
-    <td mat-cell *matCellDef="let element">{{ element.performer }}</td>
-  </ng-container>
 
+<table #stepstable mat-table [dataSource]="schedule.steps" class="table-steps">
   <ng-container matColumnDef="position">
     <th mat-header-cell *matHeaderCellDef>Position</th>
     <td mat-cell *matCellDef="let element">{{ element.position }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="topic">
-    <th mat-header-cell *matHeaderCellDef>Was</th>
-    <td mat-cell *matCellDef="let element">{{ element.topic }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="frequency">
-    <th mat-header-cell *matHeaderCellDef>Frequenz</th>
-    <td mat-cell *matCellDef="let element">{{ element.frequency }}</td>
   </ng-container>
 
   <ng-container matColumnDef="protectivegear">
@@ -76,22 +140,86 @@
   <ng-container matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef>Aktionen</th>
     <td mat-cell *matCellDef="let element">
-      <button
-        mat-icon-button
-        matTooltip="Löschen"
-        (click)="deletestep(element)"
-      >
-        <mat-icon>delete</mat-icon>
-      </button>
+      <div class="flex_container_row_start_start">
+        <button
+          mat-icon-button
+          matTooltip="Löschen"
+          (click)="deletestep(element)"
+          [ngClass]="
+            schedule.steps.indexOf(element) === 0 ? 'firstelementintable' : ''
+          "
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          matTooltip="Nach oben schieben"
+          *ngIf="schedule.steps.indexOf(element) != 0"
+          (click)="movestep(element, true)"
+        >
+          <mat-icon>arrow_upward</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          matTooltip="Nach unten schieben"
+          *ngIf="schedule.steps.indexOf(element) != schedule.steps.length - 1"
+          (click)="movestep(element, false)"
+        >
+          <mat-icon>arrow_downward</mat-icon>
+        </button>
+      </div>
     </td>
   </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  <tr mat-header-row *matHeaderRowDef="stepstable_displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: stepstable_displayedColumns"></tr>
 </table>
 <div
   class="emptydataintable flex_container_row_spacearound_center"
   *ngIf="schedule.steps.length == 0"
 >
   Noch keine Daten vorhanden.
+</div>
+
+<div class="gallery">
+  <input
+    hidden
+    #imageInput
+    type="file"
+    accept="image/*"
+    (change)="addfile($event)"
+  />
+  <button type="button" mat-stroked-button (click)="imageInput.click()">
+    Bilder hinzufügen
+  </button>
+
+  <gallery [items]="images"></gallery>
+
+  <table #filestable mat-table [dataSource]="attachments" class="table-files">
+    <ng-container matColumnDef="filename">
+      <th mat-header-cell *matHeaderCellDef>Datei</th>
+      <td mat-cell *matCellDef="let element">{{ element.filename }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="mime">
+      <th mat-header-cell *matHeaderCellDef>Dateityp</th>
+      <td mat-cell *matCellDef="let element">{{ element["mime-type"] }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Aktionen</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          mat-icon-button
+          matTooltip="Löschen"
+          (click)="deletefile(element)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="filestable_displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: filestable_displayedColumns"></tr>
+  </table>
 </div>
