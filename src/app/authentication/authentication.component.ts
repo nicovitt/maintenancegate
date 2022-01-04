@@ -39,20 +39,10 @@ export class AuthenticationComponent implements OnInit {
   }
 
   login() {
-    const promisebackend = this.userService.login(
-      this.username.trim(),
-      this.password.trim()
-    );
-
-    const promiseparse = this.parseService.login(
-      this.username.trim(),
-      this.password.trim()
-    );
-
-    // Log into backend and parse
-    Promise.all([promisebackend, promiseparse])
+    this.parseService
+      .login(this.username.trim(), this.password.trim())
       .then((value) => {
-        if (value[0] && value[1]) {
+        if (value) {
           this.router.navigate(['/dashboard']);
         } else {
           this.dialogService.presentError$({
