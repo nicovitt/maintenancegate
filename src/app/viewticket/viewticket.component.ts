@@ -69,10 +69,10 @@ export class ViewticketComponent implements OnInit {
         (ticket: Ticket) => {
           new Array<Downtime | Frequency | Priority | Restriction | Workplace>()
             .concat(
-              ticket.maintenancegate_downtime,
-              ticket.maintenancegate_frequency,
-              ticket.maintenancegate_restriction,
-              ticket.maintenancegate_workplace
+              ticket.downtime,
+              ticket.frequency,
+              ticket.restriction,
+              ticket.workplace
             )
             .map((entry) => {
               this.dataSource.push(new Generictabledata(entry));
@@ -91,7 +91,7 @@ export class ViewticketComponent implements OnInit {
           console.log(this.ticket);
 
           this.fancyprogressbarService.animateFancyProgressbar(
-            this.ticket.maintenancegate_kanban_state
+            this.ticket.kanban_state
           );
 
           this.zammadService
@@ -129,7 +129,7 @@ export class ViewticketComponent implements OnInit {
       (article) => article.id == articleid
     );
     let copyText =
-      article.from +
+      article.author +
       ' am ' +
       this.datePipe.transform(article.created_at, 'dd.MM.yyyy HH:mm') +
       '\n\n' +
@@ -162,170 +162,130 @@ export class ViewticketComponent implements OnInit {
       }
 
       const now = new Date().toISOString();
-      this.ticket.article = new Article();
-      this.ticket.article.subject = 'Ticket geändert.';
+      let article = new Article();
+      article.subject = 'Ticket geändert.';
 
       if (this.ticket.title !== result.title) {
         this.ticket.title = result.title;
       }
 
       if (
-        this.ticket.maintenancegate_faultcategory[
-          this.ticket.maintenancegate_faultcategory.length - 1
-        ].value !== result.maintenancegate_faultcategory[0].value
+        this.ticket.faultcategory[this.ticket.faultcategory.length - 1]
+          .value !== result.faultcategory[0].value
       ) {
-        this.ticket.article.body +=
+        article.body +=
           'Störgrund geändert von ' +
-          this.ticket.maintenancegate_faultcategory[
-            this.ticket.maintenancegate_faultcategory.length - 1
-          ].value +
+          this.ticket.faultcategory[this.ticket.faultcategory.length - 1]
+            .value +
           ' nach ' +
-          result.maintenancegate_faultcategory[0].value +
+          result.faultcategory[0].value +
           '\n';
-        this.ticket.maintenancegate_faultcategory.push(
-          result.maintenancegate_faultcategory[0]
-        );
+        this.ticket.faultcategory.push(result.faultcategory[0]);
       }
 
       if (
-        this.ticket.maintenancegate_workplace[
-          this.ticket.maintenancegate_workplace.length - 1
-        ].value !== result.maintenancegate_workplace[0].value
+        this.ticket.workplace[this.ticket.workplace.length - 1].value !==
+        result.workplace[0].value
       ) {
-        this.ticket.article.body +=
+        article.body +=
           'Arbeitsplatz geändert von ' +
-          this.ticket.maintenancegate_workplace[
-            this.ticket.maintenancegate_workplace.length - 1
-          ].value +
+          this.ticket.workplace[this.ticket.workplace.length - 1].value +
           ' nach ' +
-          result.maintenancegate_workplace[0].value +
+          result.workplace[0].value +
           '\n';
-        this.ticket.maintenancegate_workplace.push(
-          result.maintenancegate_workplace[0]
-        );
+        this.ticket.workplace.push(result.workplace[0]);
       }
 
       if (
-        this.ticket.maintenancegate_downtime[
-          this.ticket.maintenancegate_downtime.length - 1
-        ].value !== result.maintenancegate_downtime[0].value
+        this.ticket.downtime[this.ticket.downtime.length - 1].value !==
+        result.downtime[0].value
       ) {
-        this.ticket.article.body +=
+        article.body +=
           'Ausfallzeit geändert von ' +
-          this.ticket.maintenancegate_downtime[
-            this.ticket.maintenancegate_downtime.length - 1
-          ].value +
+          this.ticket.downtime[this.ticket.downtime.length - 1].value +
           ' nach ' +
-          result.maintenancegate_downtime[0].value +
+          result.downtime[0].value +
           '\n';
-        this.ticket.maintenancegate_downtime.push(
-          result.maintenancegate_downtime[0]
-        );
+        this.ticket.downtime.push(result.downtime[0]);
       }
 
       if (
-        this.ticket.maintenancegate_frequency[
-          this.ticket.maintenancegate_frequency.length - 1
-        ].value !== result.maintenancegate_frequency[0].value
+        this.ticket.frequency[this.ticket.frequency.length - 1].value !==
+        result.frequency[0].value
       ) {
-        this.ticket.article.body +=
+        article.body +=
           'Häufigkeit geändert von ' +
-          this.ticket.maintenancegate_frequency[
-            this.ticket.maintenancegate_frequency.length - 1
-          ].value +
+          this.ticket.frequency[this.ticket.frequency.length - 1].value +
           ' nach ' +
-          result.maintenancegate_frequency[0].value +
+          result.frequency[0].value +
           '\n';
-        this.ticket.maintenancegate_frequency.push(
-          result.maintenancegate_frequency[0]
-        );
+        this.ticket.frequency.push(result.frequency[0]);
       }
 
       if (
-        this.ticket.maintenancegate_restriction[
-          this.ticket.maintenancegate_restriction.length - 1
-        ].value !== result.maintenancegate_restriction[0].value
+        this.ticket.restriction[this.ticket.restriction.length - 1].value !==
+        result.restriction[0].value
       ) {
-        this.ticket.article.body +=
+        article.body +=
           'Einschränkung geändert von ' +
-          this.ticket.maintenancegate_restriction[
-            this.ticket.maintenancegate_restriction.length - 1
-          ].value +
+          this.ticket.restriction[this.ticket.restriction.length - 1].value +
           ' nach ' +
-          result.maintenancegate_restriction[0].value +
+          result.restriction[0].value +
           '\n';
-        this.ticket.maintenancegate_restriction.push(
-          result.maintenancegate_restriction[0]
-        );
+        this.ticket.restriction.push(result.restriction[0]);
       }
 
       if (
-        result.maintenancegate_duedate.length > 0 &&
-        (this.ticket.maintenancegate_duedate[
-          this.ticket.maintenancegate_duedate.length - 1
-        ].start !== result.maintenancegate_duedate[0].start ||
-          this.ticket.maintenancegate_duedate[
-            this.ticket.maintenancegate_duedate.length - 1
-          ].end !== result.maintenancegate_duedate[0].end)
+        result.duedate.length > 0 &&
+        (this.ticket.duedate[this.ticket.duedate.length - 1].start !==
+          result.duedate[0].start ||
+          this.ticket.duedate[this.ticket.duedate.length - 1].end !==
+            result.duedate[0].end)
       ) {
-        this.ticket.article.body +=
+        article.body +=
           'Fälligkeitsdatum geändert von ' +
           this.datePipe.transform(
-            this.ticket.maintenancegate_duedate[
-              this.ticket.maintenancegate_duedate.length - 1
-            ].start,
+            this.ticket.duedate[this.ticket.duedate.length - 1].start,
             'dd.MM.yyyy HH:mm'
           ) +
           ' - ' +
           this.datePipe.transform(
-            this.ticket.maintenancegate_duedate[
-              this.ticket.maintenancegate_duedate.length - 1
-            ].end,
+            this.ticket.duedate[this.ticket.duedate.length - 1].end,
             'dd.MM.yyyy HH:mm'
           ) +
           ' nach ' +
-          this.datePipe.transform(
-            result.maintenancegate_duedate[0].start,
-            'dd.MM.yyyy HH:mm'
-          ) +
+          this.datePipe.transform(result.duedate[0].start, 'dd.MM.yyyy HH:mm') +
           ' - ' +
-          this.datePipe.transform(
-            result.maintenancegate_duedate[0].end,
-            'dd.MM.yyyy HH:mm'
-          ) +
+          this.datePipe.transform(result.duedate[0].end, 'dd.MM.yyyy HH:mm') +
           '\n';
-        this.ticket.maintenancegate_duedate.push(
-          result.maintenancegate_duedate[0]
-        );
+        this.ticket.duedate.push(result.duedate[0]);
       }
 
       // Check whether the priority has to be recalculated.
       if (
-        result.maintenancegate_priority[0].value !==
-        this.ticket.maintenancegate_priority[
-          this.ticket.maintenancegate_priority.length - 1
-        ].value
+        result.priority[0].value !==
+        this.ticket.priority[this.ticket.priority.length - 1].value
       ) {
-        this.ticket.article.body +=
+        article.body +=
           'Priorität geändert von ' +
-          this.ticket.maintenancegate_priority[
-            this.ticket.maintenancegate_priority.length - 1
-          ].value +
+          this.ticket.priority[this.ticket.priority.length - 1].value +
           ' nach ' +
-          result.maintenancegate_priority[0].value +
+          result.priority[0].value +
           '\n';
-        this.ticket.maintenancegate_priority.push({
+        this.ticket.priority.push({
           label: 'maintenance_priority',
           value: this.ticketService.calculatepriority(
-            result.maintenancegate_downtime[0].value,
-            result.maintenancegate_frequency[0].value,
-            result.maintenancegate_restriction[0].value
+            result.downtime[0].value,
+            result.frequency[0].value,
+            result.restriction[0].value
           ),
           date: now,
         });
       }
 
-      if (this.ticket.article.body.length > 0) {
+      this.ticket.article.push(article);
+
+      if (article.body.length > 0) {
         this.zammadService.updateTicket(this.ticket).subscribe(
           (response) => {
             if (response.status == 200) {
@@ -375,7 +335,7 @@ export class ViewticketComponent implements OnInit {
           let newarticle = new Article();
           newarticle.body = response.body.body;
           newarticle.created_at = response.body.created_at;
-          newarticle.from = response.body.from;
+          newarticle.author = response.body.from;
           newarticle.id = response.body.id;
           newarticle.subject = response.body.subject;
           this.newArticle.body = '';

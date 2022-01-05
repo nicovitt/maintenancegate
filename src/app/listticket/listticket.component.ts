@@ -16,15 +16,16 @@ export class ListticketComponent implements OnInit {
     private parseService: ParseService
   ) {}
 
-  public ticketList: Array<Ticket> = [];
+  public ticketList: Array<Ticket> = new Array();
 
   ngOnInit(): void {
     this.parseService.getKanbanColumns().then((data) => {
       // console.log(data);
     });
 
-    this.zammadService.listTickets().subscribe((data: Array<Ticket>) => {
+    this.parseService.getTickets().then((data: Array<Ticket>) => {
       this.ticketList = data;
+      console.log(this.ticketList);
     });
   }
 }

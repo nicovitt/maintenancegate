@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { ParseService } from './services/parse.service';
 import { UpdateappService } from './services/updateapp.service';
 import { UserService } from './services/user.service';
 import { ZammadService } from './services/zammad.service';
@@ -20,6 +21,7 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router,
     public userService: UserService,
+    public parseService: ParseService,
     public updateappService: UpdateappService
   ) {}
 
@@ -31,7 +33,7 @@ export class AppComponent implements OnInit {
 
   logout() {
     // Delete token in localstorage
-    this.userService.logout();
+    this.parseService.logout();
     // Hide sidenav
     this.sidenav.toggle();
     // Redirect to main view

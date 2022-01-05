@@ -21,16 +21,16 @@ export class MachinebookComponent implements OnInit {
           .subscribe((articles) => {
             if (this.machinelist.length == 0) {
               this.machinelist.push({
-                name: ticket.maintenancegate_workplace[
-                  ticket.maintenancegate_workplace.length - 1
+                name: ticket.workplace[
+                  ticket.workplace.length - 1
                 ],
                 articles: articles,
               });
             }
             this.machinelist.find((o, i) => {
               let latestworkplace =
-                ticket.maintenancegate_workplace[
-                  ticket.maintenancegate_workplace.length - 1
+                ticket.workplace[
+                  ticket.workplace.length - 1
                 ].label;
               if (o.name.label == latestworkplace) {
                 this.machinelist[i].articles.push(articles);

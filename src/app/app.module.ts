@@ -54,6 +54,7 @@ import { SchedulesComponent } from './schedules/schedules.component';
 import { ScheduleslistComponent } from './scheduleslist/scheduleslist.component';
 import { SchedulescreateeditComponent } from './schedulescreateedit/schedulescreateedit.component';
 import { SchedulesexecuteComponent } from './schedulesexecute/schedulesexecute.component';
+import { CanActivateOnUnauthenticated } from './helpers/guards/can-activate-on-unauthenticated';
 
 // TODO: Collect all imports which originally recide in helpers folder and move to helpers module.
 
@@ -119,6 +120,7 @@ import { SchedulesexecuteComponent } from './schedulesexecute/schedulesexecute.c
     WorkplaceTitleToName,
     WorkplaceIdToName,
     CanActivateOnAuthenticated,
+    CanActivateOnUnauthenticated,
     User,
     Permissions,
     {

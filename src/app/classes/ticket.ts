@@ -1,79 +1,47 @@
-import { Article, TicketCreateArticleRequest } from './article';
+import { Article } from './article';
 
 export class Ticket {
+  objectId: string = '';
   id: number = null;
   title: string = '';
   group: string = '';
-  article: Article;
+  article: Array<Article>;
   customer: string = '';
-  // customer_id: string = '';
-  // article_count: number = 0;
-  // close_at: any = null;
-  // close_diff_in_min: null;
-  // close_escalation_at: null;
-  // close_in_min: null;
-  // create_article_sender_id: number = 0;
-  // create_article_type_id: number = 0;
   created_at: string = '';
-  // created_by_id: number = 0;
-  // escalation_at: null;
-  // first_response_at: string = '';
-  // first_response_diff_in_min: null;
-  // first_response_escalation_at: null;
-  // first_response_in_min: null;
-  // group_id: number = 0;
-  // last_contact_agent_at: string = '';
-  // last_contact_at: string = '';
-  // last_contact_customer_at: null;
-  // last_owner_update_at: string = '';
-  // note: null;
   number: string = '';
-  // organization_id: number = 0;
-  owner_id: number = 0;
-  // pending_time: null;
-  // preferences: {};
-  // priority_id: number = 0;
-  // state_id: number = 0;
-  // time_unit: null;
-  // type: null;
-  // update_diff_in_min: null;
-  // update_escalation_at: null;
-  // update_in_min: null;
+  owner: any;
   updated_at: string = '';
-  // updated_by_id: number = 0;
-  categorie: number = 0;
-  maintenancegate_kanban_state: number = 1;
-  maintenancegate_downtime: Downtime[] = new Array<Downtime>();
-  maintenancegate_frequency: Frequency[] = new Array<Frequency>();
-  maintenancegate_priority: Priority[] = new Array<Priority>();
-  maintenancegate_restriction: Restriction[] = new Array<Restriction>();
-  maintenancegate_workplace: Workplace[] = new Array<Workplace>();
-  maintenancegate_faultcategory: Fault[] = new Array<Fault>();
-  maintenancegate_duedate: Duedate[] = new Array<Duedate>();
+  kanban_state: number = 1;
+  downtime: Downtime[] = new Array<Downtime>();
+  frequency: Frequency[] = new Array<Frequency>();
+  priority: Priority[] = new Array<Priority>();
+  restriction: Restriction[] = new Array<Restriction>();
+  workplace: Workplace[] = new Array<Workplace>();
+  faultcategory: Fault[] = new Array<Fault>();
+  duedate: Duedate[] = new Array<Duedate>();
 
   constructor() {
-    this.article = new Article();
+    this.article = new Array<Article>();
   }
-}
 
-export class TicketCreateRequest {
-  title: string = '';
-  group: string = '';
-  article: TicketCreateArticleRequest;
-  customer: string = '';
-  owner_id: number = 0;
-  created_at: string = '';
-  maintenancegate_kanban_state: number = 1;
-  maintenancegate_downtime: Downtime[] = new Array<Downtime>();
-  maintenancegate_frequency: Frequency[] = new Array<Frequency>();
-  maintenancegate_priority: Priority[] = new Array<Priority>();
-  maintenancegate_restriction: Restriction[] = new Array<Restriction>();
-  maintenancegate_workplace: Workplace[] = new Array<Workplace>();
-  maintenancegate_faultcategory: Fault[] = new Array<Fault>();
-  maintenancegate_duedate: Duedate[] = new Array<Duedate>();
-
-  constructor() {
-    this.article = new TicketCreateArticleRequest();
+  /**
+   *
+   * @param parseresult Is of type ParseObjectSubclass
+   */
+  parseObjectToTicket(parseresult: any) {
+    this.objectId = parseresult.objectId;
+    this.id = parseresult.id;
+    this.title = parseresult.get('title');
+    this.created_at = parseresult.get('createdAt');
+    this.updated_at = parseresult.get('updatedAt');
+    this.kanban_state = parseresult.get('kanban_state');
+    this.downtime = parseresult.get('downtime');
+    this.frequency = parseresult.get('frequency');
+    this.priority = parseresult.get('priority');
+    this.restriction = parseresult.get('restriction');
+    this.workplace = parseresult.get('workplace');
+    this.faultcategory = parseresult.get('faultcategory');
+    this.duedate = parseresult.get('duedate');
   }
 }
 

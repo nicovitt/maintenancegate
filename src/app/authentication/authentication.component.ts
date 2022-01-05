@@ -25,18 +25,12 @@ export class AuthenticationComponent implements OnInit {
   password = '';
 
   constructor(
-    private userService: UserService,
     private router: Router,
     private dialogService: DialogService,
     private parseService: ParseService
   ) {}
 
-  ngOnInit(): void {
-    // Check if user is already marked as logged in.
-    this.userService.isLoggedIn.subscribe((loggedin) => {
-      loggedin ? this.router.navigate(['/dashboard']) : null;
-    });
-  }
+  ngOnInit(): void {}
 
   login() {
     this.parseService

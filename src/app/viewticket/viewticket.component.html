@@ -15,15 +15,15 @@
 <ng-container *ngIf="!progressbar.getshowprogressbar()">
   <p>Ticket erstellt: {{ ticket.created_at | date: "dd.MM.yyyy HH:mm" }}</p>
   <p>Letztes Update: {{ ticket.updated_at | date: "dd.MM.yyyy HH:mm" }}</p>
-  <p *ngIf="ticket.maintenancegate_duedate.length > 0">
+  <p *ngIf="ticket.duedate.length > 0">
     Fälligkeitsdatum:
     {{
-      ticket.maintenancegate_duedate[ticket.maintenancegate_duedate.length - 1]
+      ticket.duedate[ticket.duedate.length - 1]
         .start | date: "dd.MM.yyyy"
     }}
     -
     {{
-      ticket.maintenancegate_duedate[ticket.maintenancegate_duedate.length - 1]
+      ticket.duedate[ticket.duedate.length - 1]
         .end | date: "dd.MM.yyyy"
     }}
   </p>
@@ -32,7 +32,7 @@
     <mat-card class="infocard">
       <mat-card-title>Störgrund</mat-card-title>
       <mat-card-content>
-        <p>{{ ticket.maintenancegate_faultcategory.slice(-1)[0].value }}</p>
+        <p>{{ ticket.faultcategory.slice(-1)[0].value }}</p>
       </mat-card-content>
     </mat-card>
     <mat-card class="infocard">
@@ -40,7 +40,7 @@
       <mat-card-content>
         <p *ngIf="workplacesareloaded">
           {{
-            ticket.maintenancegate_workplace.slice(-1)[0].value
+            ticket.workplace.slice(-1)[0].value
               | formatLabelWorkplace: Workplacecategories
           }}
         </p>
@@ -49,7 +49,7 @@
     <mat-card class="infocard">
       <mat-card-title>Priorität</mat-card-title>
       <mat-card-content>
-        <p>{{ ticket.maintenancegate_priority.slice(-1)[0].value }}</p>
+        <p>{{ ticket.priority.slice(-1)[0].value }}</p>
       </mat-card-content>
     </mat-card>
   </div>

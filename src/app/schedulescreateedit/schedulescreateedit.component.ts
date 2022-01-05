@@ -116,7 +116,7 @@ export class SchedulescreateeditComponent implements OnInit, AfterViewInit {
                 this.imageService.calculateBase64MimeType(value)
               ),
             data: base64string,
-            'mime-type': this.imageService.calculateBase64MimeType(value),
+            mimetype: this.imageService.calculateBase64MimeType(value),
           });
           this.images.push(new ImageItem({ src: value }));
           this.recalculateindexes(this.attachments);
