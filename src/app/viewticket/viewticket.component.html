@@ -3,7 +3,7 @@
   <button
     mat-stroked-button
     color="primary"
-    *ngIf="userService.caneditticket"
+    *ngIf="userService.caneditticket === true"
     (click)="editTicket()"
   >
     Bearbeitungsmodus
@@ -17,15 +17,9 @@
   <p>Letztes Update: {{ ticket.updated_at | date: "dd.MM.yyyy HH:mm" }}</p>
   <p *ngIf="ticket.duedate.length > 0">
     Fälligkeitsdatum:
-    {{
-      ticket.duedate[ticket.duedate.length - 1]
-        .start | date: "dd.MM.yyyy"
-    }}
+    {{ ticket.duedate[ticket.duedate.length - 1].start | date: "dd.MM.yyyy" }}
     -
-    {{
-      ticket.duedate[ticket.duedate.length - 1]
-        .end | date: "dd.MM.yyyy"
-    }}
+    {{ ticket.duedate[ticket.duedate.length - 1].end | date: "dd.MM.yyyy" }}
   </p>
 
   <div class="cardsinformation flex_container_row_spacebetween_start">
@@ -59,7 +53,7 @@
   <mat-expansion-panel
     [expanded]="articlesstep === 0"
     (opened)="setArticlesStep(0)"
-    *ngIf="userService.caneditticket"
+    *ngIf="userService.caneditticket === true"
     hideToggle
   >
     <mat-expansion-panel-header>

@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Moment } from 'moment';
-import { Article, PlainArticlePost } from '../classes/article';
+import { Article } from '../classes/article';
 import {
   Downtime,
   Frequency,
@@ -23,7 +23,6 @@ import { ProgressbarService } from '../services/progressbar.service';
 import { SnackbarService } from '../services/snackbar.service';
 import { TicketService } from '../services/ticket.service';
 import { UserService } from '../services/user.service';
-import { ZammadService } from '../services/zammad.service';
 
 @Component({
   selector: 'app-viewticket',
@@ -35,7 +34,7 @@ export class ViewticketComponent implements OnInit {
   public articles: Array<Article> = new Array<Article>();
   public displayedColumns: string[] = ['label', 'value', 'date'];
   public dataSource: Generictabledata[] = [];
-  public newArticle: PlainArticlePost = new PlainArticlePost();
+  public newArticle: Article = new Article();
   public articlesstep: number = 0;
   public Workplacecategories: Array<Workplacecategory> = [];
   public workplacesareloaded = false;
@@ -43,17 +42,16 @@ export class ViewticketComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
 
   constructor(
-    private zammadService: ZammadService,
     private route: ActivatedRoute,
     public progressbar: ProgressbarService,
     private snackbarService: SnackbarService,
     private fancyprogressbarService: FancyprogressbarService,
-    public userService: UserService,
     private router: Router,
     private datePipe: DatePipe,
     private dialogService: DialogService,
     private ticketService: TicketService,
-    private parseService: ParseService
+    private parseService: ParseService,
+    public userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -65,7 +63,7 @@ export class ViewticketComponent implements OnInit {
     });
 
     this.route.params.subscribe((params) => {
-      this.zammadService.showTicket(params['id']).subscribe(
+      this.parseService.getTicketWithArticle(params['id']).then(
         (ticket: Ticket) => {
           new Array<Downtime | Frequency | Priority | Restriction | Workplace>()
             .concat(
@@ -87,19 +85,15 @@ export class ViewticketComponent implements OnInit {
               });
               this.table.renderRows();
             });
+
+          this.articles = ticket.article;
           this.ticket = ticket;
-          console.log(this.ticket);
 
           this.fancyprogressbarService.animateFancyProgressbar(
             this.ticket.kanban_state
           );
 
-          this.zammadService
-            .listArticlesByTicket(params['id'])
-            .subscribe((articles: any) => {
-              this.articles = articles;
-              this.progressbar.toggleProgressBar();
-            });
+          this.progressbar.toggleProgressBar();
         },
         (error) => {
           this.progressbar.getshowprogressbar
@@ -123,7 +117,7 @@ export class ViewticketComponent implements OnInit {
     this.articlesstep--;
   }
 
-  copyArticleToClipboard(articleid: number, event: Event) {
+  copyArticleToClipboard(articleid: string, event: Event) {
     event.stopPropagation();
     let article: Article = this.articles.find(
       (article) => article.id == articleid
@@ -286,15 +280,12 @@ export class ViewticketComponent implements OnInit {
       this.ticket.article.push(article);
 
       if (article.body.length > 0) {
-        this.zammadService.updateTicket(this.ticket).subscribe(
+        this.parseService.updateTicket(this.ticket).then(
           (response) => {
-            if (response.status == 200) {
+            if (response) {
               let dialogRef = this.dialogService.presentConfirmation$({
                 header: 'ticketUpdateSuccess',
-                title:
-                  'Ticket "' +
-                  response.body.title +
-                  '" erfolgreich aktualisiert.',
+                title: 'Ticket erfolgreich aktualisiert.',
                 message: 'Das Ticket wurde erfolgreich aktualisiert.',
               });
 
@@ -328,30 +319,18 @@ export class ViewticketComponent implements OnInit {
     if (this.newArticle.body == '') {
       return;
     }
-    this.newArticle.ticket_id = this.ticket.id;
-    this.zammadService.createPlainArticle(this.newArticle).subscribe(
-      (response: HttpResponse<any>) => {
-        if (response.status == 201) {
-          let newarticle = new Article();
-          newarticle.body = response.body.body;
-          newarticle.created_at = response.body.created_at;
-          newarticle.author = response.body.from;
-          newarticle.id = response.body.id;
-          newarticle.subject = response.body.subject;
-          this.newArticle.body = '';
-          this.articles.push(newarticle);
-          this.snackbarService.opensnackbar(
-            'Neue Notiz hinzugefügt.',
-            '',
-            30000
-          );
-        } else {
-          this.snackbarService.opensnackbar(
-            'Entschuldigung: Die Nachricht konnte nicht gespeichert werden.',
-            '',
-            30000
-          );
-        }
+
+    this.parseService.postArticle(this.ticket.objectId, this.newArticle).then(
+      (response: Parse.Object) => {
+        let newarticle = new Article();
+        newarticle.body = response.get('body');
+        newarticle.created_at = response.get('created_at');
+        newarticle.author = response.get('author');
+        newarticle.id = response.get('objectId');
+        newarticle.subject = response.get('subject');
+        this.articles.push(newarticle);
+        this.newArticle.body = '';
+        this.snackbarService.opensnackbar('Neue Notiz hinzugefügt.', '', 30000);
       },
       (error) => {
         this.snackbarService.opensnackbar(

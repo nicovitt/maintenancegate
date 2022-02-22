@@ -22,6 +22,28 @@ export class UserService {
     this.isLoggedIn$.next(true);
   }
 
+  // TODO: Change this to be managed by parse
+  createpermissions(rolespromise: Promise<Array<Parse.Role>>) {
+    rolespromise.then((roles: Array<Parse.Role>) => {
+      roles.forEach((role: Parse.Role) => {
+        if (
+          role.getName() === 'maintenance' ||
+          role.getName() === 'master' ||
+          role.getName() === 'foreman' ||
+          role.getName() === 'admin'
+        ) {
+          this.caneditticket = true;
+          this.caneditschedule = true;
+        }
+      });
+    });
+  }
+
+  deletepermissions() {
+    this.permissions.caneditschedule = false;
+    this.permissions.caneditticket = false;
+  }
+
   get isLoggedIn(): Observable<boolean> {
     return this.isLoggedIn$.asObservable();
   }

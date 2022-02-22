@@ -3,42 +3,86 @@
   [showbackbutton]="true"
 ></app-pageheader>
 
-<table #stepstable mat-table [dataSource]="schedule.steps" class="table-steps">
+<!-- TODO: Fancyprogressbar here with progress of this specific worker/role -->
+
+<gallery [items]="images"></gallery>
+
+<table
+  #stepstable
+  mat-table
+  [dataSource]="schedule.steps"
+  multiTemplateDataRows
+  class="table-steps"
+>
+  <ng-container
+    matColumnDef="{{ column }}"
+    *ngFor="let column of stepstable_columnIndices; let i = index"
+  >
+    <th mat-header-cell *matHeaderCellDef>{{ stepstable_columnNames[i] }}</th>
+    <td mat-cell *matCellDef="let element">{{ element[column] }}</td>
+  </ng-container>
+
+  <!-- Action Column: Because it is different. -->
   <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef>Aktionen</th>
-    <td mat-cell *matCellDef="let element"></td>
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let element">
+      <mat-checkbox
+        (click)="$event.stopPropagation()"
+        (change)="$event ? selection.toggle(element) : null"
+        [checked]="selection.isSelected(element)"
+        [disabled]="!hasrole(element)"
+        [aria-label]="checkboxLabel(element)"
+      >
+      </mat-checkbox>
+    </td>
   </ng-container>
 
-  <ng-container matColumnDef="performer">
-    <th mat-header-cell *matHeaderCellDef>Mitarbeiter</th>
-    <td mat-cell *matCellDef="let element">{{ element.performer }}</td>
+  <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+  <ng-container matColumnDef="expandedDetail">
+    <td
+      mat-cell
+      *matCellDef="let element"
+      [attr.colspan]="stepstable_columnSlugs.length"
+    >
+      <div
+        class="step-detail"
+        [@detailExpand]="
+          expandedElements.includes(element) ? 'expanded' : 'collapsed'
+        "
+      >
+        <mat-form-field appearance="fill" class="comment">
+          <mat-label>Kommentar (optional)</mat-label>
+          <textarea matInput [(ngModel)]="element.comment"></textarea>
+        </mat-form-field>
+      </div>
+    </td>
   </ng-container>
 
-  <ng-container matColumnDef="position">
-    <th mat-header-cell *matHeaderCellDef>Position</th>
-    <td mat-cell *matCellDef="let element">{{ element.position }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="protectivegear">
-    <th mat-header-cell *matHeaderCellDef>PSA</th>
-    <td mat-cell *matCellDef="let element">{{ element.protectivegear }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="type">
-    <th mat-header-cell *matHeaderCellDef>Typ</th>
-    <td mat-cell *matCellDef="let element">{{ element.type }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="description">
-    <th mat-header-cell *matHeaderCellDef>Beschreibung</th>
-    <td mat-cell *matCellDef="let element">{{ element.description }}</td>
-  </ng-container>
-
-  <ng-container matColumnDef="usedmaterial">
-    <th mat-header-cell *matHeaderCellDef>Material</th>
-    <td mat-cell *matCellDef="let element">{{ element.usedmaterial }}</td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="stepstable_displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: stepstable_displayedColumns"></tr>
+  <tr mat-header-row *matHeaderRowDef="stepstable_columnSlugs"></tr>
+  <tr
+    mat-row
+    *matRowDef="let element; columns: stepstable_columnSlugs"
+    class="step-row"
+    [class.expanded-row]="expandedElements.includes(element)"
+    [class.disabled-row]="!hasrole(element)"
+    (click)="
+      hasrole(element) ? addToSelection(element) : null;
+      hasrole(element) ? selection.toggle(element) : null
+    "
+  ></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: ['expandedDetail']"
+    class="detail-row"
+  ></tr>
 </table>
+
+<button
+  mat-raised-button
+  color="primary"
+  [disabled]="!(selection.hasValue() && isAllSelected())"
+  class="finishbutton"
+  (click)="submit()"
+>
+  Bericht absenden
+</button>

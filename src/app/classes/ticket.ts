@@ -29,7 +29,7 @@ export class Ticket {
    * @param parseresult Is of type ParseObjectSubclass
    */
   parseObjectToTicket(parseresult: any) {
-    this.objectId = parseresult.objectId;
+    this.objectId = parseresult.id;
     this.id = parseresult.id;
     this.title = parseresult.get('title');
     this.created_at = parseresult.get('createdAt');
@@ -42,6 +42,19 @@ export class Ticket {
     this.workplace = parseresult.get('workplace');
     this.faultcategory = parseresult.get('faultcategory');
     this.duedate = parseresult.get('duedate');
+  }
+
+  parseObjectToArticle(parseresult: Array<Parse.Object>) {
+    parseresult.forEach((parsearticle) => {
+      let article = new Article();
+      article.body = parsearticle.get('body');
+      article.subject = parsearticle.get('subject');
+      article.created_at = parsearticle.get('created_at');
+      article.id = parsearticle.id;
+      article.author = parsearticle.get('author');
+      article.images = parsearticle.get('attachment');
+      this.article.push(article);
+    });
   }
 }
 

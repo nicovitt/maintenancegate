@@ -1,19 +1,7 @@
-import {
-  Component,
-  OnInit,
-  Output,
-  EventEmitter,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { AppComponent } from '../app.component';
 import { DialogService } from '../services/dialog.service';
-import { LocalstorageService } from '../services/localstorage.service';
 import { ParseService } from '../services/parse.service';
-import { ProgressbarService } from '../services/progressbar.service';
-import { UserService } from '../services/user.service';
-import { ZammadService } from '../services/zammad.service';
 
 @Component({
   selector: 'app-authentication',

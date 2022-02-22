@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
-import { Step } from 'src/app/classes/schedules';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Schedules, Step } from 'src/app/classes/schedules';
 
 @Component({
   selector: 'app-create-schedule-step-dialog',
@@ -10,6 +10,7 @@ import { Step } from 'src/app/classes/schedules';
 })
 export class CreateScheduleStepDialogComponent implements OnInit {
   public stepsForm: FormGroup;
+  public roles: any = [];
   public typeselectList: any[] = [
     { name: 'Aktion', icon: 'construction' },
     { name: 'Visuell', icon: 'visibility' },
@@ -20,17 +21,21 @@ export class CreateScheduleStepDialogComponent implements OnInit {
 
   constructor(
     private _formBuilder: FormBuilder,
-    public dialogRef: MatDialogRef<CreateScheduleStepDialogComponent>
-  ) {}
+    public dialogRef: MatDialogRef<CreateScheduleStepDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    console.log(this.data);
+    this.roles = data;
+  }
 
   ngOnInit(): void {
     this.stepsForm = this._formBuilder.group({
-      performer: ['', Validators.required],
       position: ['', Validators.required],
       protectivegear: ['', Validators.required],
       type: ['', Validators.required],
       description: ['', Validators.required],
       usedmaterial: ['', Validators.required],
+      performer: [''],
     });
   }
 
@@ -41,6 +46,7 @@ export class CreateScheduleStepDialogComponent implements OnInit {
     step.type = this.stepsForm.get('type').value;
     step.description = this.stepsForm.get('description').value;
     step.usedmaterial = this.stepsForm.get('usedmaterial').value;
+    step.performer = this.stepsForm.get('performer').value;
 
     if (this.stepsForm.valid) {
       this.dialogRef.close(step);

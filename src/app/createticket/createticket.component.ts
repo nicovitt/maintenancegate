@@ -139,7 +139,7 @@ export class CreateticketComponent implements OnInit {
 
       const base64string = 'base64,';
       let result = <string>reader.result;
-      this.ticket.article[0].attachments.push({
+      this.ticket.article[0].images.push({
         id: 0,
         filename: filebasename + '.' + type,
         data: result.substring(
