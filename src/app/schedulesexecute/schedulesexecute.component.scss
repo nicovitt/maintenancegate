@@ -2,3 +2,65 @@
   width: 100%;
   margin-top: 50px;
 }
+
+tr.detail-row {
+  height: 0;
+}
+
+tr.step-row {
+  cursor: pointer;
+}
+
+tr.step-row:not(.expanded-row):not(.disabled-row):hover {
+  background: whitesmoke;
+}
+
+tr.step-row:not(.expanded-row):active {
+  background: #efefef;
+}
+
+tr.step-row.disabled-row {
+  background: #efefef;
+}
+
+.step-row td {
+  border-bottom-width: 0;
+}
+
+.step-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.step-diagram {
+  min-width: 80px;
+  border: 2px solid black;
+  padding: 8px;
+  font-weight: lighter;
+  margin: 8px 0;
+  height: 104px;
+}
+
+.step-symbol {
+  font-weight: bold;
+  font-size: 40px;
+  line-height: normal;
+}
+
+.step-description {
+  padding: 16px;
+}
+
+.step-description-attribution {
+  opacity: 0.5;
+}
+
+.comment {
+  width: 100%;
+  margin: 30px;
+}
+
+.finishbutton {
+  margin-top: 50px;
+  width: 100%;
+}

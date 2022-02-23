@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthenticationComponent } from './authentication/authentication.component';
 import { CreateticketComponent } from './createticket/createticket.component';
 import { CanActivateOnAuthenticated } from './helpers/guards/can-activate-on-authenticated';
+import { CanActivateOnUnauthenticated } from './helpers/guards/can-activate-on-unauthenticated';
 import { ImpressComponent } from './impress/impress.component';
 import { ListticketComponent } from './listticket/listticket.component';
 import { SchedulesComponent } from './schedules/schedules.component';
@@ -12,7 +13,11 @@ import { ScheduleslistComponent } from './scheduleslist/scheduleslist.component'
 import { ViewticketComponent } from './viewticket/viewticket.component';
 
 const routes: Routes = [
-  { path: 'login', component: AuthenticationComponent },
+  {
+    path: 'login',
+    component: AuthenticationComponent,
+    canActivate: [CanActivateOnUnauthenticated],
+  },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   {
     path: 'dashboard',

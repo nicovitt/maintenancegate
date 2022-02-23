@@ -133,9 +133,10 @@ export class DialogService {
     return dialogRef;
   }
 
-  addStep() {
+  addStep(roles: any) {
     const dialogRef = this.dialog.open(CreateScheduleStepDialogComponent, {
       width: '90%',
+      data: roles,
       hasBackdrop: true,
       disableClose: true,
     });

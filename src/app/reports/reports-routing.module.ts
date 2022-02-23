@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CanActivateOnAuthenticated } from '../helpers/guards/can-activate-on-authenticated';
 import { MachinebookComponent } from './machinebook/machinebook.component';
 import { ReportsComponent } from './reports/reports.component';
+import { SchedulesComponent } from './schedules/schedules.component';
 
 const routes: Routes = [
   // { path: '', redirectTo: '/overview', pathMatch: 'full' },
@@ -14,6 +15,11 @@ const routes: Routes = [
   {
     path: 'machinebook',
     component: MachinebookComponent,
+    canActivate: [CanActivateOnAuthenticated],
+  },
+  {
+    path: 'schedules',
+    component: SchedulesComponent,
     canActivate: [CanActivateOnAuthenticated],
   },
 ];

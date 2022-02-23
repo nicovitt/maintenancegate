@@ -1,19 +1,7 @@
-import {
-  Component,
-  OnInit,
-  Output,
-  EventEmitter,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { AppComponent } from '../app.component';
 import { DialogService } from '../services/dialog.service';
-import { LocalstorageService } from '../services/localstorage.service';
 import { ParseService } from '../services/parse.service';
-import { ProgressbarService } from '../services/progressbar.service';
-import { UserService } from '../services/user.service';
-import { ZammadService } from '../services/zammad.service';
 
 @Component({
   selector: 'app-authentication',
@@ -25,34 +13,18 @@ export class AuthenticationComponent implements OnInit {
   password = '';
 
   constructor(
-    private userService: UserService,
     private router: Router,
     private dialogService: DialogService,
     private parseService: ParseService
   ) {}
 
-  ngOnInit(): void {
-    // Check if user is already marked as logged in.
-    this.userService.isLoggedIn.subscribe((loggedin) => {
-      loggedin ? this.router.navigate(['/dashboard']) : null;
-    });
-  }
+  ngOnInit(): void {}
 
   login() {
-    const promisebackend = this.userService.login(
-      this.username.trim(),
-      this.password.trim()
-    );
-
-    const promiseparse = this.parseService.login(
-      this.username.trim(),
-      this.password.trim()
-    );
-
-    // Log into backend and parse
-    Promise.all([promisebackend, promiseparse])
+    this.parseService
+      .login(this.username.trim(), this.password.trim())
       .then((value) => {
-        if (value[0] && value[1]) {
+        if (value) {
           this.router.navigate(['/dashboard']);
         } else {
           this.dialogService.presentError$({

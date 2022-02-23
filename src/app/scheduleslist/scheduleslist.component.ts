@@ -28,10 +28,10 @@ export class ScheduleslistComponent implements OnInit {
     private progressbar: ProgressbarService,
     private pipe_workplaceidtoname: WorkplaceIdToName,
     private dialogService: DialogService,
-    public userService: UserService,
     private scheduleService: ScheduleService,
     private router: Router,
-    private snackbar: SnackbarService
+    private snackbar: SnackbarService,
+    public userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -65,17 +65,17 @@ export class ScheduleslistComponent implements OnInit {
   }
 
   addPlan(workplaceid: number) {
-    if (!this.userService.caneditschedule) {
-      return;
-    }
+    // if (!this.userService.caneditschedule) {
+    //   return;
+    // }
     this.scheduleService.schedule = new Schedules();
     this.router.navigate(['/schedules/create', workplaceid]);
   }
 
   editPlan(schedule: Schedules) {
-    if (!this.userService.caneditschedule) {
-      return;
-    }
+    // if (!this.userService.caneditschedule) {
+    //   return;
+    // }
     this.scheduleService.schedule = schedule;
     this.router.navigate(['/schedules/create', schedule.workplaceid]);
   }
@@ -94,9 +94,9 @@ export class ScheduleslistComponent implements OnInit {
   }
 
   deletePlan(scheduletodelete: Schedules) {
-    if (!this.userService.caneditschedule) {
-      return;
-    }
+    // if (!this.userService.caneditschedule) {
+    //   return;
+    // }
     this.dialogService
       .deleteSchedule(scheduletodelete)
       .afterClosed()

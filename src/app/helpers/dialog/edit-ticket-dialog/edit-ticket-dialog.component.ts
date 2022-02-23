@@ -83,15 +83,15 @@ export class EditTicketDialogComponent implements OnInit {
     this.dialogformGroup = this._formBuilder.group({
       title: [this.data.title, Validators.required],
       category: [
-        this.data.maintenancegate_faultcategory[
-          this.data.maintenancegate_faultcategory.length - 1
+        this.data.faultcategory[
+          this.data.faultcategory.length - 1
         ].value,
         Validators.required,
       ],
       category2: [''],
       workplace: [
-        this.data.maintenancegate_workplace[
-          this.data.maintenancegate_workplace.length - 1
+        this.data.workplace[
+          this.data.workplace.length - 1
         ].value,
         Validators.required,
       ],
@@ -99,37 +99,37 @@ export class EditTicketDialogComponent implements OnInit {
       photos: ['', Validators.required],
       audios: [''],
       downtime: [
-        this.data.maintenancegate_downtime[
-          this.data.maintenancegate_downtime.length - 1
+        this.data.downtime[
+          this.data.downtime.length - 1
         ].value,
         Validators.required,
       ],
       frequency: [
-        this.data.maintenancegate_frequency[
-          this.data.maintenancegate_frequency.length - 1
+        this.data.frequency[
+          this.data.frequency.length - 1
         ].value,
         Validators.required,
       ],
       restriction: [
-        this.data.maintenancegate_restriction[
-          this.data.maintenancegate_restriction.length - 1
+        this.data.restriction[
+          this.data.restriction.length - 1
         ].value,
         Validators.required,
       ],
       start: [
-        this.data.maintenancegate_duedate.length > 0
+        this.data.duedate.length > 0
           ? new Date(
-              this.data.maintenancegate_duedate[
-                this.data.maintenancegate_duedate.length - 1
+              this.data.duedate[
+                this.data.duedate.length - 1
               ].start
             )
           : '',
       ],
       end: [
-        this.data.maintenancegate_duedate.length > 0
+        this.data.duedate.length > 0
           ? new Date(
-              this.data.maintenancegate_duedate[
-                this.data.maintenancegate_duedate.length - 1
+              this.data.duedate[
+                this.data.duedate.length - 1
               ].end
             )
           : '',
@@ -176,7 +176,7 @@ export class EditTicketDialogComponent implements OnInit {
 
     this.ticket.title = this.dialogformGroup.get('title').value;
 
-    this.ticket.maintenancegate_faultcategory.push({
+    this.ticket.faultcategory.push({
       label: 'maintenance_faultcategory',
       value:
         this.dialogformGroup.get('category').value ==
@@ -186,7 +186,7 @@ export class EditTicketDialogComponent implements OnInit {
       date: now,
     });
 
-    this.ticket.maintenancegate_workplace.push({
+    this.ticket.workplace.push({
       label: 'maintenance_workplace',
       value:
         this.dialogformGroup.get('workplace').value == this._workplaceotherlabel
@@ -195,26 +195,26 @@ export class EditTicketDialogComponent implements OnInit {
       date: now,
     });
 
-    this.ticket.maintenancegate_downtime.push({
+    this.ticket.downtime.push({
       label: 'maintenance_downtime',
       value: this.dialogformGroup.get('downtime').value,
       date: now,
     });
 
-    this.ticket.maintenancegate_frequency.push({
+    this.ticket.frequency.push({
       label: 'maintenance_frequency',
       value: this.dialogformGroup.get('frequency').value,
       date: now,
     });
 
-    this.ticket.maintenancegate_restriction.push({
+    this.ticket.restriction.push({
       label: 'maintenance_restriction',
       value: this.dialogformGroup.get('restriction').value,
       date: now,
     });
 
     if (this.dialogformGroup.get('start').value) {
-      this.ticket.maintenancegate_duedate.push({
+      this.ticket.duedate.push({
         label: 'maintenance_duedate',
         start: (
           this.dialogformGroup.get('start').value as Moment
@@ -224,17 +224,17 @@ export class EditTicketDialogComponent implements OnInit {
       });
     }
 
-    this.ticket.maintenancegate_priority.push({
+    this.ticket.priority.push({
       label: 'maintenance_priority',
       value: this.ticketService.calculatepriority(
-        this.ticket.maintenancegate_downtime[
-          this.ticket.maintenancegate_downtime.length - 1
+        this.ticket.downtime[
+          this.ticket.downtime.length - 1
         ].value,
-        this.ticket.maintenancegate_frequency[
-          this.ticket.maintenancegate_frequency.length - 1
+        this.ticket.frequency[
+          this.ticket.frequency.length - 1
         ].value,
-        this.ticket.maintenancegate_restriction[
-          this.ticket.maintenancegate_restriction.length - 1
+        this.ticket.restriction[
+          this.ticket.restriction.length - 1
         ].value
       ),
       date: now,

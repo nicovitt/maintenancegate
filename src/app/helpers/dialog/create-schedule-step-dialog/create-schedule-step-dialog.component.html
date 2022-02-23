@@ -58,6 +58,31 @@
         >Wird zusätzliches Werkzeug benötigt?</mat-error
       >
     </mat-form-field>
+
+    <mat-form-field appearance="outline" type="text">
+      <mat-label>Ausführende Stelle</mat-label>
+      <mat-select formControlName="performer" multiple>
+        <mat-select-trigger>
+          {{
+            stepsForm.get("performer").value
+              ? stepsForm.get("performer").value[0]
+              : ""
+          }}
+          <span *ngIf="stepsForm.get('performer').value?.length > 1">
+            (+{{ stepsForm.get("performer").value.length - 1 }}
+            {{
+              stepsForm.get("performer").value?.length === 2
+                ? "andere Stelle"
+                : "andere Stellen"
+            }})
+          </span>
+        </mat-select-trigger>
+        <mat-option *ngFor="let role of roles" [value]="role.get('name')">{{
+          role.get("name")
+        }}</mat-option>
+      </mat-select>
+      <mat-hint>Von wem soll der Plan bearbeitet werden?</mat-hint>
+    </mat-form-field>
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

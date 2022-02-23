@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Ticket } from 'src/app/classes/ticket';
-import { ZammadService } from 'src/app/services/zammad.service';
+import { ParseService } from 'src/app/services/parse.service';
 
 @Component({
   selector: 'app-machinebook',
@@ -10,44 +10,37 @@ import { ZammadService } from 'src/app/services/zammad.service';
 })
 export class MachinebookComponent implements OnInit {
   machinelist = new Array();
-  constructor(private zammadService: ZammadService, private router: Router) {}
+  constructor(private parseService: ParseService, private router: Router) {}
 
   ngOnInit(): void {
-    this.zammadService.listTickets().subscribe((tickets: Array<Ticket>) => {
-      console.log(tickets);
-      tickets.forEach((ticket: Ticket) => {
-        this.zammadService
-          .listArticlesByTicket(ticket.id)
-          .subscribe((articles) => {
-            if (this.machinelist.length == 0) {
-              this.machinelist.push({
-                name: ticket.maintenancegate_workplace[
-                  ticket.maintenancegate_workplace.length - 1
-                ],
-                articles: articles,
-              });
-            }
-            this.machinelist.find((o, i) => {
-              let latestworkplace =
-                ticket.maintenancegate_workplace[
-                  ticket.maintenancegate_workplace.length - 1
-                ].label;
-              if (o.name.label == latestworkplace) {
-                this.machinelist[i].articles.push(articles);
-                return true;
-              } else {
-                if (latestworkplace != 'Sonstiger') {
-                  this.machinelist.push({
-                    name: latestworkplace,
-                    articles: articles,
-                  });
-                }
-                return true;
-              }
+    this.parseService
+      .getTicketsWithArticles()
+      .then((tickets: Array<Ticket>) => {
+        tickets.forEach((ticket: Ticket) => {
+          if (this.machinelist.length == 0) {
+            this.machinelist.push({
+              name: ticket.workplace[ticket.workplace.length - 1],
+              articles: ticket.article,
             });
-            console.log(this.machinelist);
+          }
+          this.machinelist.find((o, i) => {
+            let latestworkplace =
+              ticket.workplace[ticket.workplace.length - 1].label;
+            if (o.name.label == latestworkplace) {
+              this.machinelist[i].articles.push(ticket.article);
+              return true;
+            } else {
+              if (latestworkplace != 'Sonstiger') {
+                this.machinelist.push({
+                  name: latestworkplace,
+                  articles: ticket.article,
+                });
+              }
+              return true;
+            }
           });
+          console.log(this.machinelist);
+        });
       });
-    });
   }
 }

@@ -6,11 +6,19 @@ export class Schedules {
   title: string = '';
   description: string = '';
   workplaceid: number = 0;
-  performer: string = '';
   updatedAt: string = '';
   createdAt: string = '';
   series: Series = new Series();
   images: Array<Attachment> = new Array();
+  steps: Array<Step> = new Array();
+}
+
+export class Schedules_Execution {
+  objectId: string = '';
+  updatedAt: string = '';
+  createdAt: string = '';
+  createdBy: string = '';
+  schedule: any;
   steps: Array<Step> = new Array();
 }
 
@@ -21,6 +29,9 @@ export class Step {
   type: string = '';
   description: string = '';
   usedmaterial: string = '';
+  performer: string = '';
+  done: boolean = false;
+  comment: string = '';
 }
 
 export class Series {

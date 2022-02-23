@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  EventEmitter,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatTable } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,7 +18,6 @@ import { ImageService } from '../services/image.service';
 import { ParseService } from '../services/parse.service';
 import { ScheduleService } from '../services/schedule.service';
 import { SnackbarService } from '../services/snackbar.service';
-import { ZammadService } from '../services/zammad.service';
 
 @Component({
   selector: 'app-schedulescreateedit',
@@ -22,6 +27,7 @@ import { ZammadService } from '../services/zammad.service';
 export class SchedulescreateeditComponent implements OnInit, AfterViewInit {
   public schedule: Schedules;
   public schedulemetadataForm: FormGroup;
+  public roles: any = [];
   public plansaved: boolean = false;
   public attachments: Array<Attachment> = [];
   public images: Array<GalleryItem> = [];
@@ -33,6 +39,7 @@ export class SchedulescreateeditComponent implements OnInit, AfterViewInit {
     'type',
     'description',
     'usedmaterial',
+    'performer',
     'actions',
   ];
   @ViewChild('filestable') filesstable: MatTable<Attachment>;
@@ -50,15 +57,14 @@ export class SchedulescreateeditComponent implements OnInit, AfterViewInit {
     private snackbar: SnackbarService,
     private scheduleService: ScheduleService,
     private imageService: ImageService,
-    private router: Router,
-    private zammadService: ZammadService
+    private router: Router
   ) {
     if (typeof this.scheduleService.schedule == 'undefined') {
       this.router.navigate(['/schedules']);
     }
     this.schedule = this.scheduleService.schedule;
-    this.zammadService.listGroups().subscribe((groups) => {
-      console.log(groups);
+    this.parseService.getUserRoles().then((roles) => {
+      this.roles = roles;
     });
   }
 
@@ -66,7 +72,6 @@ export class SchedulescreateeditComponent implements OnInit, AfterViewInit {
     this.schedulemetadataForm = this._formBuilder.group({
       title: [this.schedule.title, Validators.required],
       description: [this.schedule.description, Validators.required],
-      performer: [''],
       series_enabled: [this.scheduleService.series_enabled],
       series_frequency: [this.schedule.series.frequency],
       monday: [this.schedule.series.monday],
@@ -116,7 +121,7 @@ export class SchedulescreateeditComponent implements OnInit, AfterViewInit {
                 this.imageService.calculateBase64MimeType(value)
               ),
             data: base64string,
-            'mime-type': this.imageService.calculateBase64MimeType(value),
+            mimetype: this.imageService.calculateBase64MimeType(value),
           });
           this.images.push(new ImageItem({ src: value }));
           this.recalculateindexes(this.attachments);
@@ -127,7 +132,7 @@ export class SchedulescreateeditComponent implements OnInit, AfterViewInit {
   }
 
   addstep() {
-    let dialogRef = this.dialogService.addStep();
+    let dialogRef = this.dialogService.addStep(this.roles);
     dialogRef.afterClosed().subscribe((value: Step) => {
       if (value instanceof Step) {
         this.schedule.steps.push(value);
@@ -138,10 +143,9 @@ export class SchedulescreateeditComponent implements OnInit, AfterViewInit {
   }
 
   deletestep(step: Step) {
+    console.log(step);
     this.schedule.steps.splice(
-      this.schedule.steps.findIndex((value) => {
-        value.id == step.id;
-      }),
+      this.schedule.steps.findIndex((value) => value == step),
       1
     );
     this.recalculateindexes(this.schedule.steps);

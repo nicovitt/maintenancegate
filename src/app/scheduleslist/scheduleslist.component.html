@@ -11,7 +11,7 @@
   <button
     mat-stroked-button
     color="primary"
-    *ngIf="userService.caneditschedule"
+    *ngIf="userService.caneditschedule === true"
     (click)="addPlan(workplace.id)"
   >
     Plan hinzufügen
@@ -45,7 +45,7 @@
       <button
         mat-icon-button
         matTooltip="Plan bearbeiten"
-        *ngIf="userService.caneditschedule"
+        *ngIf="userService.caneditschedule === true"
         (click)="editPlan(element)"
       >
         <mat-icon>edit</mat-icon>
@@ -53,7 +53,7 @@
       <button
         mat-icon-button
         matTooltip="Plan löschen"
-        *ngIf="userService.caneditschedule"
+        *ngIf="userService.caneditschedule === true"
         (click)="deletePlan(element)"
       >
         <mat-icon>delete</mat-icon>

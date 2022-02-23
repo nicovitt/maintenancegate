@@ -4,13 +4,7 @@
 
 export const environment = {
   production: false,
-  sessiontokenname: 'maintenancegate_session_token',
-  sessiontokenlabel: 'Token for maintenance.gate',
-  sessionuserlabel: 'Username for maintenance.gate',
-  isloggedinname: 'isloggedin',
-  usernamename: 'username',
-  domainnamename: 'domainname',
-  version: '2.1.7',
+  version: '2.2.0',
 };
 
 /*

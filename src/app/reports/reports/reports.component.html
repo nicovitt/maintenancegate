@@ -1,7 +1,14 @@
+<app-pageheader headline="Berichte" [showbackbutton]="true"></app-pageheader>
 <!-- <div echarts [options]="chartOption" class="demo-chart"></div> -->
 
-<div>
-  <div class="navigationbox" [routerLink]="['machinebook']">
-    <h3>Maschinenbuch</h3>
-  </div>
-</div>
+<h1>Verfügbare Berichte</h1>
+<mat-divider></mat-divider>
+
+<mat-grid-list cols="4" rowHeight="2:1" class="reportnavigation">
+  <mat-grid-tile colspan="1" [routerLink]="['machinebook']"
+    ><div class="navigationbox">Maschinenbuch</div></mat-grid-tile
+  >
+  <mat-grid-tile colspan="1" [routerLink]="['schedules']"
+    ><div class="navigationbox">Wartungspläne</div></mat-grid-tile
+  >
+</mat-grid-list>
