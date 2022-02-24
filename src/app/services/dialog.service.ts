@@ -14,6 +14,7 @@ import { CreateScheduleDialogComponent } from '../helpers/dialog/create-schedule
 import { DeleteScheduleDialogComponent } from '../helpers/dialog/delete-schedule-dialog/delete-schedule-dialog.component';
 import { DeleteGenericDialogComponent } from '../helpers/dialog/delete-generic-dialog/delete-generic-dialog.component';
 import { ExecuteScheduleDialogComponent } from '../helpers/dialog/execute-schedule-dialog/execute-schedule-dialog.component';
+import { ShowScheduleExecutionDialogComponent } from '../helpers/dialog/show-schedule-execution-dialog/show-schedule-execution-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -137,6 +138,16 @@ export class DialogService {
     const dialogRef = this.dialog.open(CreateScheduleStepDialogComponent, {
       width: '90%',
       data: roles,
+      hasBackdrop: true,
+      disableClose: true,
+    });
+    return dialogRef;
+  }
+
+  showScheduleExecution(schedule: Schedules) {
+    const dialogRef = this.dialog.open(ShowScheduleExecutionDialogComponent, {
+      width: '90%',
+      data: schedule,
       hasBackdrop: true,
       disableClose: true,
     });

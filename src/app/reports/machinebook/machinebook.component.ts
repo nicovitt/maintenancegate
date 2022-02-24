@@ -9,7 +9,8 @@ import { ParseService } from 'src/app/services/parse.service';
   styleUrls: ['./machinebook.component.scss'],
 })
 export class MachinebookComponent implements OnInit {
-  machinelist = new Array();
+  public machinelist = new Array();
+
   constructor(private parseService: ParseService, private router: Router) {}
 
   ngOnInit(): void {

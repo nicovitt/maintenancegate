@@ -23,6 +23,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { GalleryModule } from 'ng-gallery';
@@ -37,6 +38,7 @@ import { BackButtonDirective } from './backbutton/back-button.directive';
 import { PageheaderComponent } from './pageheader/pageheader.component';
 import { DeleteGenericDialogComponent } from './dialog/delete-generic-dialog/delete-generic-dialog.component';
 import { ExecuteScheduleDialogComponent } from './dialog/execute-schedule-dialog/execute-schedule-dialog.component';
+import { ShowScheduleExecutionDialogComponent } from './dialog/show-schedule-execution-dialog/show-schedule-execution-dialog.component';
 
 @NgModule({
   declarations: [
@@ -61,6 +63,7 @@ import { ExecuteScheduleDialogComponent } from './dialog/execute-schedule-dialog
     PageheaderComponent,
     DeleteGenericDialogComponent,
     ExecuteScheduleDialogComponent,
+    ShowScheduleExecutionDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -79,6 +82,7 @@ import { ExecuteScheduleDialogComponent } from './dialog/execute-schedule-dialog
     MatRadioModule,
     MatSliderModule,
     MatCardModule,
+    MatExpansionModule,
     MatAutocompleteModule,
     MatDatepickerModule,
     MatTableModule,

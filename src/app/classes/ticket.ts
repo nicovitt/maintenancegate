@@ -25,7 +25,7 @@ export class Ticket {
   }
 
   /**
-   *
+   *  TODO: Rework this whole parsing of Parse.Object to this object. Basically Parse should make the direct relation with the executions.
    * @param parseresult Is of type ParseObjectSubclass
    */
   parseObjectToTicket(parseresult: any) {

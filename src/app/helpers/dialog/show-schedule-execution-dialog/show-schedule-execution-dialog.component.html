@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>Wartungsplan "{{ data.title }}"</h2>
+<mat-dialog-content>
+  <mat-accordion class="accordion" multi>
+    <mat-expansion-panel *ngFor="let execution of data.execution">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Ausführung vom {{ execution.createdAt | date: "dd.MM.yyyy HH:mm" }}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{ execution.createdBy.get("username") }}
+          <mat-icon>account_circle</mat-icon>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div *ngFor="let step of execution.steps">
+        <mat-divider></mat-divider>
+        <h2>Schritt {{ step.id }}</h2>
+        <p *ngIf="step.done">Schritt wurde durchgeführt.</p>
+        <p *ngIf="!step.done">
+          Schritt wurde <span class="boldsection">nicht</span> durchgeführt.
+        </p>
+        <p>Typ: {{ step.type }}</p>
+        <p>PSA: {{ step.protectivegear }}</p>
+        <p>
+          <span class="boldsection">Kommentar</span><br />
+          {{ step.comment }}
+        </p>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <!-- <button mat-button (click)="onCloseClick()">Abbrechen</button> -->
+  <button mat-button (click)="submitChanges()" cdkFocusInitial>OK</button>
+</mat-dialog-actions>

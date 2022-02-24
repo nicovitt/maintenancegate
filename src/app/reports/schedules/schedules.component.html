@@ -2,3 +2,84 @@
   headline="Durchgeführte Wartungen"
   [showbackbutton]="true"
 ></app-pageheader>
+
+<mat-form-field class="searchfield" appearance="fill">
+  <mat-label>Suchen nach ID, Kostenstelle, Beschreibung ...</mat-label>
+  <input matInput type="text" [(ngModel)]="filterService.searchString" />
+  <button
+    *ngIf="filterService.searchString"
+    matSuffix
+    mat-icon-button
+    aria-label="Clear"
+    (click)="filterService.searchString = ''"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+</mat-form-field>
+
+<mat-grid-list cols="2" rowHeight="2:1">
+  <mat-grid-tile
+    *ngFor="let element of filteredWorkplaces"
+    [colspan]="1"
+    [rowspan]="1"
+  >
+    <mat-card class="workplacecard">
+      <mat-card-title>{{ element.workplace.description }}</mat-card-title>
+      <mat-card-subtitle
+        >Kostenstelle:
+        {{
+          element.workplace.title ? element.workplace.title : "Keine Zuordnung"
+        }}</mat-card-subtitle
+      >
+      <mat-card-content>
+        <table mat-table [dataSource]="element.schedules" class="cardtable">
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef>Titel</th>
+            <td mat-cell *matCellDef="let schedule">
+              {{ schedule.title }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>Beschreibung</th>
+            <td mat-cell *matCellDef="let schedule">
+              <span [innerHTML]="schedule.description | sanitizeHtml"></span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="action">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let schedule">
+              <button
+                mat-icon-button
+                aria-label="Show schedule button."
+                (click)="showscheduleexecution(schedule)"
+              >
+                <mat-icon aria-hidden="false" aria-label="Show schedule icon"
+                  >visibility</mat-icon
+                >
+              </button>
+
+              <button
+                mat-icon-button
+                aria-label="Export schedule button."
+                (click)="exportscheduleexecution(schedule)"
+              >
+                <mat-icon aria-hidden="false" aria-label="Export schedule icon"
+                  >import_export</mat-icon
+                >
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </mat-card-content>
+      <mat-card-actions>
+        <!-- <button mat-button>LIKE</button>
+          <button mat-button>SHARE</button> -->
+      </mat-card-actions>
+    </mat-card>
+  </mat-grid-tile>
+</mat-grid-list>

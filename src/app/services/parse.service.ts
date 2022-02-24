@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Article } from '../classes/article';
 import { Attachment } from '../classes/attachment';
 import { Kanban_Column } from '../classes/kanban';
-import { Schedules } from '../classes/schedules';
+import { Schedules, Schedules_Execution } from '../classes/schedules';
 import { Ticket } from '../classes/ticket';
 import { Workplacecategory } from '../classes/workplacecategory';
 import { ImageService } from './image.service';
@@ -113,9 +113,9 @@ export class ParseService {
     let tickets: Array<Ticket> = [];
     const Tickets = this.instance.Object.extend('Ticket');
     const query = new this.instance.Query(Tickets);
-
     query.equalTo('owner', this.getCurrentUser());
     const results = await query.find();
+
     for (let i = 0; i < results.length; i++) {
       let tmp = new Ticket();
       await results[i]
@@ -403,6 +403,34 @@ export class ParseService {
     });
   }
 
+  async getSchedulesAndExecution(id: number) {
+    let _schedules: Array<Schedules> = [];
+
+    let currentUser = this.getCurrentUser().relation('mandant').query();
+    const mandant = await currentUser.find();
+
+    const queryschedule = new this.instance.Query(
+      this.instance.Object.extend('Schedule')
+    );
+    queryschedule.equalTo('workplaceid', id);
+    queryschedule.matchesKeyInQuery('objectid', 'mandant', mandant[0]);
+
+    const results = await queryschedule.find();
+    for (let i = 0; i < results.length; i++) {
+      let tmp: Schedules = new Schedules();
+      await results[i]
+        .relation('execution')
+        .query()
+        .find()
+        .then((schedules: Array<Parse.Object>) => {
+          tmp.parseObjectToSchedule(results[i]);
+          tmp.parseObjectToExecutions(schedules);
+          _schedules.push(tmp);
+        });
+    }
+    return _schedules;
+  }
+
   async saveScheduleExecution(schedule: Schedules) {
     const SchedulesExecution =
       this.instance.Object.extend('Schedule_Execution');
@@ -415,11 +443,32 @@ export class ParseService {
       if (object) {
         // Schedule exists.
         var executionobject = new SchedulesExecution();
-        executionobject.set('schedule', object);
         executionobject.set('createdBy', this.getCurrentUser());
         executionobject.set('steps', schedule.steps);
+        return executionobject.save().then(
+          async (savedexecution: Parse.Object) => {
+            object.relation('execution').add(savedexecution);
+
+            return object.save().then(
+              (backobject: Parse.Object) => {
+                return new Promise((resolve, reject) => {
+                  resolve(savedexecution);
+                });
+              },
+              (err: Parse.Error) => {
+                return new Promise((resolve, reject) => {
+                  reject();
+                });
+              }
+            );
+          },
+          (error: Parse.Error) => {
+            return new Promise((resolve, reject) => {
+              reject();
+            });
+          }
+        );
       }
-      return executionobject.save();
     });
   }
 
