@@ -63,7 +63,7 @@ export class SchedulescreateeditComponent implements OnInit, AfterViewInit {
       this.router.navigate(['/schedules']);
     }
     this.schedule = this.scheduleService.schedule;
-    this.parseService.getUserRoles().then((roles) => {
+    this.parseService.getMandantRoles().then((roles) => {
       this.roles = roles;
     });
   }

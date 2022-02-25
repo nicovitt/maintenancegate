@@ -55,6 +55,7 @@ import { ScheduleslistComponent } from './scheduleslist/scheduleslist.component'
 import { SchedulescreateeditComponent } from './schedulescreateedit/schedulescreateedit.component';
 import { SchedulesexecuteComponent } from './schedulesexecute/schedulesexecute.component';
 import { CanActivateOnUnauthenticated } from './helpers/guards/can-activate-on-unauthenticated';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 // TODO: Collect all imports which originally recide in helpers folder and move to helpers module.
 
@@ -129,6 +130,10 @@ import { CanActivateOnUnauthenticated } from './helpers/guards/can-activate-on-u
         dots: true,
         imageSize: 'cover',
       },
+    },
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: { appearance: 'standard' },
     },
   ],
   bootstrap: [AppComponent],

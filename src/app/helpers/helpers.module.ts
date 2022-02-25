@@ -39,6 +39,7 @@ import { PageheaderComponent } from './pageheader/pageheader.component';
 import { DeleteGenericDialogComponent } from './dialog/delete-generic-dialog/delete-generic-dialog.component';
 import { ExecuteScheduleDialogComponent } from './dialog/execute-schedule-dialog/execute-schedule-dialog.component';
 import { ShowScheduleExecutionDialogComponent } from './dialog/show-schedule-execution-dialog/show-schedule-execution-dialog.component';
+import { EditTicketKanbanStateDialogComponent } from './dialog/edit-ticket-kanban-state-dialog/edit-ticket-kanban-state-dialog.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { ShowScheduleExecutionDialogComponent } from './dialog/show-schedule-exe
     DeleteGenericDialogComponent,
     ExecuteScheduleDialogComponent,
     ShowScheduleExecutionDialogComponent,
+    EditTicketKanbanStateDialogComponent,
   ],
   imports: [
     CommonModule,

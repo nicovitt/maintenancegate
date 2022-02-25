@@ -1,0 +1,43 @@
+<app-pageheader headline="Monitor" [showbackbutton]="true"></app-pageheader>
+<mat-grid-list [cols]="kanbanstates.length">
+  <mat-grid-tile [colspan]="1" *ngFor="let list of kanbanstates">
+    <div class="card-list mat-elevation-z1">
+      <h2>{{ list.label }}</h2>
+      <div *ngFor="let ticket of ticketList">
+        <mat-card
+          class="ticketcard"
+          [routerLink]="['/ticket', ticket.id]"
+          *ngIf="ticket.kanban_state == list.id"
+        >
+          <mat-card-title>{{ ticket.title }}</mat-card-title>
+          <mat-card-subtitle
+            >Arbeitsplatz:
+            {{
+              ticket.workplace[ticket.workplace.length - 1].value
+            }}</mat-card-subtitle
+          >
+          <mat-card-content>
+            <span class="fielddescription">Kategorie: </span
+            ><span>{{ ticket.kanban_state }}</span
+            ><br />
+            <span class="fielddescription">Erstellt: </span
+            ><span>{{ ticket.created_at | date: "dd.MM.yyyy HH:mm" }}</span
+            ><br />
+            <span class="fielddescription">Status: </span
+            ><span>{{ ticket.kanban_state }}</span
+            ><br />
+            <span class="fielddescription">Priorität: </span
+            ><span>{{
+              ticket.priority[ticket.priority.length - 1].value
+            }}</span>
+          </mat-card-content>
+          <mat-card-actions align="end">
+            <button mat-button (click)="chagestate(ticket, $event)">
+              Neuer Status
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>

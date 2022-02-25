@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Ticket beabreiten</h2>
+<mat-dialog-content>
+  <p>Bitte geben Sie hier den neuen Status des Tickets an.</p>
+  <div class="changestateform">
+    <mat-form-field>
+      <mat-label>Status</mat-label>
+      <mat-select [(value)]="newstate">
+        <mat-option [value]="state.id" *ngFor="let state of data.states">{{
+          state.label
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Beschreibung</mat-label>
+      <textarea matInput [(ngModel)]="description"></textarea>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCloseClick()">Abbrechen</button>
+  <button mat-button (click)="submitChanges()" cdkFocusInitial>
+    Speichern
+  </button>
+</mat-dialog-actions>

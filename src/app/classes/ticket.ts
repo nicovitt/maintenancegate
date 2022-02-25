@@ -49,7 +49,7 @@ export class Ticket {
       let article = new Article();
       article.body = parsearticle.get('body');
       article.subject = parsearticle.get('subject');
-      article.created_at = parsearticle.get('created_at');
+      article.created_at = parsearticle.createdAt;
       article.id = parsearticle.id;
       article.author = parsearticle.get('author');
       article.images = parsearticle.get('attachment');

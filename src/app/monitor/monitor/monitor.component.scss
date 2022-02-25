@@ -1,0 +1,24 @@
+.card-list {
+  // Stretch the element to the height of the board and make it scrollable.
+  box-sizing: border-box;
+  margin: 10px;
+  width: 100%;
+  height: 100%;
+
+  // Some extra styling to make the card list look better.
+  background: #e2e2e2;
+  //   border-radius: 4px;
+  padding: 6px;
+
+  h2 {
+    // Extra spacing to make things look better.
+    color: black;
+    text-align: center;
+    margin-block-start: 0.5em;
+    margin-block-end: 0.5em;
+  }
+}
+
+.ticketcard {
+  cursor: pointer;
+}

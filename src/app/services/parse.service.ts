@@ -94,6 +94,18 @@ export class ParseService {
     return query;
   }
 
+  async getMandantRoles() {
+    let currentUser = this.getCurrentUser().relation('mandant').query();
+    const results = await currentUser.find();
+
+    if (results.length > 0) {
+      let query = await new Parse.Query(Parse.Role)
+        .equalTo('mandant', results[0])
+        .find();
+      return query;
+    }
+  }
+
   async getTickets() {
     let tickets: Array<Ticket> = [];
     const Tickets = this.instance.Object.extend('Ticket');
@@ -372,9 +384,11 @@ export class ParseService {
     return _maintenanceschedule;
   }
 
-  saveSchedules(schedule: Schedules): Promise<any> {
+  async saveSchedules(schedule: Schedules): Promise<any> {
     const Schedules = this.instance.Object.extend('Schedule');
     const queryschedule = new this.instance.Query(Schedules);
+    let currentUser = this.getCurrentUser().relation('mandant').query();
+    const mandant = await currentUser.find();
 
     queryschedule.equalTo('objectId', schedule.objectId);
     return queryschedule.first().then((object: any) => {
@@ -384,6 +398,8 @@ export class ParseService {
         object.set('description', schedule.description);
         object.set('workplaceid', schedule.workplaceid);
         object.set('steps', schedule.steps);
+        object.relation('mandant').add(mandant);
+        return object.save();
       } else {
         // No object exists. Create a new one.
         var object = new Schedules();
@@ -391,15 +407,20 @@ export class ParseService {
         object.set('description', schedule.description);
         object.set('workplaceid', schedule.workplaceid);
         object.set('steps', schedule.steps);
+        object.relation('mandant').add(mandant);
+
+        if (schedule.images.length > 0) {
+          return this.uploadFiles(schedule.images, object).then(
+            (backobject: Parse.Object) => {
+              object = backobject;
+
+              return object.save();
+            }
+          );
+        } else {
+          return object.save();
+        }
       }
-      if (schedule.images.length > 0) {
-        this.uploadFiles(schedule.images, object).then(
-          (backobject: Parse.Object) => {
-            object = backobject;
-          }
-        );
-      }
-      return object.save();
     });
   }
 

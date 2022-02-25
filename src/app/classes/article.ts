@@ -5,7 +5,7 @@ export class Article {
   subject: string = '';
   body: string = '';
   author: any;
-  created_at: string = '';
+  created_at: Date = new Date();
   images: Array<Attachment>;
 
   constructor() {

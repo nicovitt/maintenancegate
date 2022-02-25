@@ -24,7 +24,6 @@ export class CreateScheduleStepDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<CreateScheduleStepDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
-    console.log(this.data);
     this.roles = data;
   }
 
