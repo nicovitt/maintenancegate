@@ -143,13 +143,32 @@ export class SchedulescreateeditComponent implements OnInit, AfterViewInit {
   }
 
   deletestep(step: Step) {
-    console.log(step);
     this.schedule.steps.splice(
       this.schedule.steps.findIndex((value) => value == step),
       1
     );
     this.recalculateindexes(this.schedule.steps);
     this.stepstable.renderRows();
+  }
+
+  editstep(step: Step) {
+    let dialogRef = this.dialogService.editStep(this.roles, step);
+    dialogRef.afterClosed().subscribe((value: Step) => {
+      // Not essential for data-management. Changes were already applied to the object but needed for displaying reasons.
+      let stepfound = this.schedule.steps.find((step: Step) => {
+        return step.id == value.id;
+      });
+      if (stepfound) {
+        stepfound.description = value.description;
+        stepfound.performer = value.performer;
+        stepfound.position = value.position;
+        stepfound.protectivegear = value.protectivegear;
+        stepfound.type = value.type;
+        stepfound.usedmaterial = value.usedmaterial;
+        this.recalculateindexes(this.schedule.steps);
+        this.stepstable.renderRows();
+      }
+    });
   }
 
   movestep(step: Step, upwards: boolean) {

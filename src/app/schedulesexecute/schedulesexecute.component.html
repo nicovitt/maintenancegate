@@ -27,7 +27,7 @@
     <th mat-header-cell *matHeaderCellDef></th>
     <td mat-cell *matCellDef="let element">
       <mat-checkbox
-        (click)="$event.stopPropagation()"
+        (click)="$event.stopPropagation(); addToSelection(element)"
         (change)="$event ? selection.toggle(element) : null"
         [checked]="selection.isSelected(element)"
         [disabled]="!hasrole(element)"

@@ -7,7 +7,7 @@ import {
 import { Ticket } from '../classes/ticket';
 import 'moment/locale/de';
 import { EditTicketDialogComponent } from '../helpers/dialog/edit-ticket-dialog/edit-ticket-dialog.component';
-import { Schedules } from '../classes/schedules';
+import { Schedules, Step } from '../classes/schedules';
 import { ShowScheduleDialogComponent } from '../helpers/dialog/show-schedule-dialog/show-schedule-dialog.component';
 import { CreateScheduleStepDialogComponent } from '../helpers/dialog/create-schedule-step-dialog/create-schedule-step-dialog.component';
 import { CreateScheduleDialogComponent } from '../helpers/dialog/create-schedule-dialog/create-schedule-dialog.component';
@@ -16,6 +16,7 @@ import { DeleteGenericDialogComponent } from '../helpers/dialog/delete-generic-d
 import { ExecuteScheduleDialogComponent } from '../helpers/dialog/execute-schedule-dialog/execute-schedule-dialog.component';
 import { ShowScheduleExecutionDialogComponent } from '../helpers/dialog/show-schedule-execution-dialog/show-schedule-execution-dialog.component';
 import { EditTicketKanbanStateDialogComponent } from '../helpers/dialog/edit-ticket-kanban-state-dialog/edit-ticket-kanban-state-dialog.component';
+import { EditScheduleStepDialogComponent } from '../helpers/dialog/edit-schedule-step-dialog/edit-schedule-step-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -139,6 +140,16 @@ export class DialogService {
     const dialogRef = this.dialog.open(CreateScheduleStepDialogComponent, {
       width: '90%',
       data: roles,
+      hasBackdrop: true,
+      disableClose: true,
+    });
+    return dialogRef;
+  }
+
+  editStep(roles: any, step: Step) {
+    const dialogRef = this.dialog.open(EditScheduleStepDialogComponent, {
+      width: '90%',
+      data: { roles: roles, step: step },
       hasBackdrop: true,
       disableClose: true,
     });

@@ -356,14 +356,13 @@ export class ParseService {
   async getSchedules(id: number) {
     var _maintenanceschedule: Array<Schedules> = [];
 
-    let currentUser = this.getCurrentUser().relation('mandant').query();
-    const mandant = await currentUser.find();
+    let mandantquery = this.getCurrentUser().relation('mandant').query();
+    const mandant = await mandantquery.find();
 
     const Schedules = this.instance.Object.extend('Schedule');
     const queryschedule = new this.instance.Query(Schedules);
     queryschedule.equalTo('workplaceid', id);
-
-    queryschedule.matchesKeyInQuery('objectid', 'mandant', mandant[0]);
+    queryschedule.matchesKeyInQuery('objectid', 'mandant', mandantquery);
 
     let results = await queryschedule.find();
     for (let i = 0; i < results.length; i++) {

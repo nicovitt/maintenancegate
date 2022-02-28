@@ -152,6 +152,16 @@
         </button>
         <button
           mat-icon-button
+          matTooltip="Bearbeiten"
+          (click)="editstep(element)"
+          [ngClass]="
+            schedule.steps.indexOf(element) === 0 ? 'firstelementintable' : ''
+          "
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
           matTooltip="Nach oben schieben"
           *ngIf="schedule.steps.indexOf(element) != 0"
           (click)="movestep(element, true)"
