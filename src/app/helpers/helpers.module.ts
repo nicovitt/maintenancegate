@@ -41,6 +41,8 @@ import { ExecuteScheduleDialogComponent } from './dialog/execute-schedule-dialog
 import { ShowScheduleExecutionDialogComponent } from './dialog/show-schedule-execution-dialog/show-schedule-execution-dialog.component';
 import { EditTicketKanbanStateDialogComponent } from './dialog/edit-ticket-kanban-state-dialog/edit-ticket-kanban-state-dialog.component';
 import { EditScheduleStepDialogComponent } from './dialog/edit-schedule-step-dialog/edit-schedule-step-dialog.component';
+import { SliderDowntimeComponent } from './sliders/slider-downtime/slider-downtime.component';
+import { SliderFrequencyComponent } from './sliders/slider-frequency/slider-frequency.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +70,8 @@ import { EditScheduleStepDialogComponent } from './dialog/edit-schedule-step-dia
     ShowScheduleExecutionDialogComponent,
     EditTicketKanbanStateDialogComponent,
     EditScheduleStepDialogComponent,
+    SliderDowntimeComponent,
+    SliderFrequencyComponent,
   ],
   imports: [
     CommonModule,
@@ -108,6 +112,8 @@ import { EditScheduleStepDialogComponent } from './dialog/edit-schedule-step-dia
     EditTicketDialogComponent,
     BackButtonDirective,
     PageheaderComponent,
+    SliderDowntimeComponent,
+    SliderFrequencyComponent,
   ],
 })
 export class HelpersModule {}

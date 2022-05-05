@@ -1,0 +1,18 @@
+<div class="customsliderdowntime" [formGroup]="form">
+  <h3 id="sliderDowntimeLabel">Vermutete Dauer bis zur Störungsbehebung</h3>
+  <div class="slidercontainer">
+    <!-- <label class="sliderlabelstart">Minuten</label> -->
+    <mat-slider
+      class="sliderwithlabel"
+      thumbLabel="true"
+      [displayWith]="formatLabel"
+      tickInterval="1"
+      formControlName="worker_downtime"
+      aria-labelledby="sliderDowntimeLabel"
+      min="0"
+      max="100"
+      step="25"
+    ></mat-slider>
+    <!-- <label class="sliderlabelend">Wochen</label> -->
+  </div>
+</div>

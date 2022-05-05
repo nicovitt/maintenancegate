@@ -19,6 +19,7 @@ export class ParseService {
   }
 
   // TODO: Parse has to check whether the user is authorized to get the data. Users could change domainname in localstorage and get data from others.
+  // TODO: Move this to a config-file.
   constructor(
     private userService: UserService,
     private imageService: ImageService
@@ -106,18 +107,33 @@ export class ParseService {
     }
   }
 
+  /**
+   * 
+   * @returns All tickets of the group the current user is in.
+   * TODO: Some tickets get duplicated.
+   */
   async getTickets() {
     let tickets: Array<Ticket> = [];
-    const Tickets = this.instance.Object.extend('Ticket');
-    const query = new this.instance.Query(Tickets);
 
-    query.equalTo('owner', this.getCurrentUser());
-    const results = await query.find();
-    for (let i = 0; i < results.length; i++) {
-      let tmp = new Ticket();
-      tmp.parseObjectToTicket(results[i]);
-      tickets.push(tmp);
-    }
+    await this.getUserRoles().then(async (roles: Array<Parse.Role>) => {
+      roles.forEach(async (role: Parse.Role) => {
+        await role
+          .getUsers()
+          .query()
+          .each(async (user: Parse.User) => {
+            const Tickets = this.instance.Object.extend('Ticket');
+            const query = new this.instance.Query(Tickets);
+            query.equalTo('owner', user);
+
+            const results = await query.find();
+            for (let j = 0; j < results.length; j++) {
+              let tmp = new Ticket();
+              tmp.parseObjectToTicket(results[j]);
+              tickets.push(tmp);
+            }
+          });
+      });
+    });
     return tickets;
   }
 

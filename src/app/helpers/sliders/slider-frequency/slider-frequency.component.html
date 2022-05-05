@@ -1,0 +1,18 @@
+<div class="customsliderfrequency" [formGroup]="form">
+  <h3 id="sliderFrequencyLabel">Häufigkeit des Problems</h3>
+  <div class="slidercontainer">
+    <!-- <label class="sliderlabelstart">Nie</label> -->
+    <mat-slider
+      class="sliderwithlabel"
+      thumbLabel="true"
+      [displayWith]="formatLabel"
+      tickInterval="1"
+      formControlName="worker_frequency"
+      aria-labelledby="sliderFrequencyLabel"
+      min="0"
+      max="100"
+      step="25"
+    ></mat-slider>
+    <!-- <label class="sliderlabelend">Immer</label> -->
+  </div>
+</div>

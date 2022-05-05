@@ -195,40 +195,14 @@
     <form [formGroup]="formGroup">
       <ng-template matStepLabel>Prioritäten</ng-template>
       <!-- Stillstand -->
-      <h3 id="sliderDowntimeLabel">Vermutete Dauer bis zur Störungsbehebung</h3>
-      <div class="flex_container_row_nowrap_spacebetween_center">
-        <label class="sliderlabelstart">Minuten</label>
-        <mat-slider
-          thumbLabel
-          tickInterval="1"
-          formControlName="worker_downtime"
-          aria-labelledby="sliderDowntimeLabel"
-          min="0"
-          max="100"
-          step="25"
-        ></mat-slider>
-        <label class="sliderlabelend">Wochen</label>
-      </div>
+      <slider-downtime [form]="formGroup"></slider-downtime>
+      <mat-divider></mat-divider>
 
       <!-- Häufigkeit -->
+      <slider-frequency [form]="formGroup"></slider-frequency>
       <mat-divider></mat-divider>
-      <h3 id="sliderFrequencyLabel">Häufigkeit des Problems</h3>
-      <div class="flex_container_row_nowrap_spacebetween_center">
-        <label class="sliderlabelstart">Nie</label>
-        <mat-slider
-          thumbLabel
-          tickInterval="1"
-          formControlName="worker_frequency"
-          aria-labelledby="sliderFrequencyLabel"
-          min="0"
-          max="100"
-          step="25"
-        ></mat-slider>
-        <label class="sliderlabelend">Immer</label>
-      </div>
 
       <!-- Einschränkung -->
-      <mat-divider></mat-divider>
       <h3 id="RadioGroupLabel">Einschränkung</h3>
       <mat-radio-group
         aria-labelledby="RadioGroupRestrictionLabel"
